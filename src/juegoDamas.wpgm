@@ -1,0 +1,73 @@
+import wollok.game.*
+import fichas.*
+import tablero.*
+
+program damas {
+
+//	CONFIG	
+	game.title("Damas")
+	game.height(8)
+	game.width(8)
+	game.boardGround("tablero.jpg")	
+	
+// FICHAS
+	var roja1=new FichaRoja(position=game.at(0,0))
+	var roja2=new FichaRoja(position=game.at(2,0))
+	var roja3=new FichaRoja(position=game.at(4,0))
+	var roja4=new FichaRoja(position=game.at(6,0))
+	
+	game.addVisual(roja1)
+	game.addVisual(roja2)
+	game.addVisual(roja3)
+	game.addVisual(roja4)
+	game.addVisual(marcoSelector)
+	
+// Teclado
+
+	keyboard.up().onPressDo { marcoSelector.move(marcoSelector.position().up(1)) }
+	keyboard.down().onPressDo { marcoSelector.move(marcoSelector.position().down(1)) }
+	keyboard.left().onPressDo { marcoSelector.move(marcoSelector.position().left(1)) }
+	keyboard.right().onPressDo { marcoSelector.move(marcoSelector.position().right(1)) }
+	keyboard.s().onPressDo {marcoSelector.asignarFicha(marcoSelector.position())}
+	keyboard.c().onPressDo {marcoSelector.colocarFicha(marcoSelector.position())}
+
+//	START
+	game.start()
+
+}	
+
+/* 
+//	CONFIG	
+	game.title("Granjaville")
+	game.height(12)
+	game.width(12)
+	game.ground("ground.png")
+
+//	VISUALES
+	game.addVisual(hector)
+	var mercado1=new Mercado(position=game.at(0,0),monedas=1000)
+	var mercado2=new Mercado(position=game.at(9,9),monedas=5000)
+	game.addVisual(mercado1)
+	game.addVisual(mercado2)
+
+//	TECLADO
+
+	
+	keyboard.up().onPressDo { hector.move(hector.position().up(1)) }
+	keyboard.down().onPressDo { hector.move(hector.position().down(1)) }
+	keyboard.left().onPressDo { hector.move(hector.position().left(1)) }
+	keyboard.right().onPressDo { hector.move(hector.position().right(1)) }
+	keyboard.m().onPressDo { hector.sembra(maiz)}
+	keyboard.t().onPressDo { hector.sembra(trigo)}
+	keyboard.o().onPressDo { hector.sembra(tomaco)}
+	keyboard.r().onPressDo { hector.hacerAlgoALasPlantas("regar")}
+	keyboard.c().onPressDo { hector.hacerAlgoALasPlantas("cosechar")}
+	keyboard.v().onPressDo { game.colliders(hector).forEach{cosa=>if(cosa.sosMercado()){cosa.comprarAHector()}}}
+	keyboard.space().onPressDo { juego.queTiene(hector)}
+	keyboard.z().onPressDo { juego.queTiene(mercado1)}
+	keyboard.x().onPressDo { juego.queTiene(mercado2)}
+	
+//	START
+	game.start()
+}
+*/	
