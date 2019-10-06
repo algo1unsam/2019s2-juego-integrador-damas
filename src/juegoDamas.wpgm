@@ -7,19 +7,31 @@ program damas {
 //	CONFIG	
 	game.title("Damas")
 	game.height(8)
-	game.width(8)
-	game.boardGround("tablero.jpg")	
+	game.width(12)
+	game.boardGround("fondoMadera.jpg")	
 	
-// FICHAS
-	var roja1=new FichaRoja(position=game.at(0,0))
-	var roja2=new FichaRoja(position=game.at(2,0))
-	var roja3=new FichaRoja(position=game.at(4,0))
-	var roja4=new FichaRoja(position=game.at(6,0))
+// ELEMENTOS VISUALES
+	game.addVisual(tablero)
+
+	var clara1=new FichaClara(position=game.at(4,0))
+	var clara2=new FichaClara(position=game.at(6,0))
+	var clara3=new FichaClara(position=game.at(8,0))
+	var clara4=new FichaClara(position=game.at(10,0))
 	
-	game.addVisual(roja1)
-	game.addVisual(roja2)
-	game.addVisual(roja3)
-	game.addVisual(roja4)
+	var oscura1=new FichaOscura(position=game.at(5,7))
+	var oscura2=new FichaOscura(position=game.at(7,7))
+	var oscura3=new FichaOscura(position=game.at(9,7))
+	var oscura4=new FichaOscura(position=game.at(11,7))
+	
+	game.addVisual(clara1)
+	game.addVisual(clara2)
+	game.addVisual(clara3)
+	game.addVisual(clara4)
+	
+	game.addVisual(oscura1)
+	game.addVisual(oscura2)
+	game.addVisual(oscura3)
+	game.addVisual(oscura4)
 	game.addVisual(marcoSelector)
 	
 // Teclado

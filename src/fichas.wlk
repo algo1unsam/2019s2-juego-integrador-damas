@@ -1,6 +1,6 @@
 import wollok.game.*
 
-class FichaRoja {
+class FichaClara {
 	var property position 
 	var direccionMovimiento=1
 	
@@ -18,13 +18,13 @@ class FichaRoja {
 		
 	}
 	
-	method image(){return "fichaRoja.png"}
+	method image(){return "fichaClara.png"}
 
 }
 
-class FichaNegra {
+class FichaOscura {
 	var property position 
 	
-	method image(){return "fichaNegra.png"}
+	method image(){return "fichaOscura.png"}
 
 }
