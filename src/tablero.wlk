@@ -7,7 +7,7 @@ object tablero{
 }
 
 object marcoSelector {
-	var property position=game.at(4,0)
+	var property position=game.at(4,2)
 	var property fichaSeleccionada
 	
 	method asignarFicha(posicion){
