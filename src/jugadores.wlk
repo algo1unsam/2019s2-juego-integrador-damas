@@ -2,7 +2,7 @@ import wollok.game.*
 import tablero.*
 import fichas.*
 
-object jugador1 {
+class Jugador{
 	const fichas = []
 	const fichasRestantes = []
 	
@@ -11,22 +11,31 @@ object jugador1 {
 	}
 	
 	method agregarFichas(ficha){
-		fichas.add(ficha)
-		fichasRestantes.add(ficha)
+		fichas.addAll(ficha)
+		fichasRestantes.addAll(ficha)
 	}
 }
 
-object jugador2 {
-	const fichas = []
-	const fichasRestantes = []
-
-	method misFichas(){
-		return fichasRestantes
-	}
+object jugador1 inherits Jugador{
+	var property unidades=claraUni
+	var property decenas=claraDec
 	
-	method agregarFichas(ficha){
-		fichas.add(ficha)
-		fichasRestantes.add(ficha)
+	
+	var position = game.at(1, 6)
+
+	method image() {
+		return "jugador1.jpg"
 	}
 
+}
+
+object jugador2 inherits Jugador{
+	var property unidades=oscuraUni
+	var property decenas=oscuraDec
+	
+	var position = game.at(1, 3)
+
+	method image() {
+		return "jugador2.jpg"
+	}
 }

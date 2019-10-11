@@ -27,19 +27,7 @@ program damas {
 	var clara11=new FichaClara(position=game.at(8,2))
 	var clara12=new FichaClara(position=game.at(10,2))	
 	
-	jugador1.agregarFichas(clara1)
-	jugador1.agregarFichas(clara2)
-	jugador1.agregarFichas(clara3)
-	jugador1.agregarFichas(clara4)
-	jugador1.agregarFichas(clara5)
-	jugador1.agregarFichas(clara6)
-	jugador1.agregarFichas(clara7)
-	jugador1.agregarFichas(clara8)
-	jugador1.agregarFichas(clara9)
-	jugador1.agregarFichas(clara10)
-	jugador1.agregarFichas(clara11)
-	jugador1.agregarFichas(clara12)
-	
+	jugador1.agregarFichas([clara1,clara2,clara3,clara4,clara5,clara6,clara7,clara8,clara9,clara10,clara11,clara12])
 	
 	var oscura1=new FichaOscura(position=game.at(5,7))
 	var oscura2=new FichaOscura(position=game.at(7,7))
@@ -54,20 +42,8 @@ program damas {
 	var oscura11=new FichaOscura(position=game.at(9,5))
 	var oscura12=new FichaOscura(position=game.at(11,5))
 	
-	jugador2.agregarFichas(oscura1)
-	jugador2.agregarFichas(oscura2)
-	jugador2.agregarFichas(oscura3)
-	jugador2.agregarFichas(oscura4)
-	jugador2.agregarFichas(oscura5)
-	jugador2.agregarFichas(oscura6)
-	jugador2.agregarFichas(oscura7)
-	jugador2.agregarFichas(oscura8)
-	jugador2.agregarFichas(oscura9)
-	jugador2.agregarFichas(oscura10)
-	jugador2.agregarFichas(oscura11)
-	jugador2.agregarFichas(oscura12)
-		
-		
+	jugador2.agregarFichas([oscura1,oscura2,oscura3,oscura4,oscura5,oscura6,oscura7,oscura8,oscura9,oscura10,oscura11,oscura12])
+			
 	game.addVisual(clara1)
 	game.addVisual(clara2)
 	game.addVisual(clara3)
@@ -95,6 +71,12 @@ program damas {
 	game.addVisual(oscura12)
 		
 	game.addVisual(marcoSelector)
+	game.addVisual(jugador1)
+	game.addVisual(jugador2)
+	game.addVisual(claraDec)
+	game.addVisual(claraUni)
+	game.addVisual(oscuraDec)
+	game.addVisual(oscuraUni)
 	
 // Teclado
 

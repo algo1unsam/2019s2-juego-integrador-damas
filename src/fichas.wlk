@@ -43,3 +43,4 @@ class FichaOscura inherits Ficha {
 	method image(){return "fichaOscura.png"}
 
 }
+
