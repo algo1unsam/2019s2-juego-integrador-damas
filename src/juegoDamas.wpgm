@@ -1,6 +1,7 @@
 import wollok.game.*
 import fichas.*
 import tablero.*
+import jugadores.*
 
 program damas {
 
@@ -26,6 +27,19 @@ program damas {
 	var clara11=new FichaClara(position=game.at(8,2))
 	var clara12=new FichaClara(position=game.at(10,2))	
 	
+	jugador1.agregarFichas(clara1)
+	jugador1.agregarFichas(clara2)
+	jugador1.agregarFichas(clara3)
+	jugador1.agregarFichas(clara4)
+	jugador1.agregarFichas(clara5)
+	jugador1.agregarFichas(clara6)
+	jugador1.agregarFichas(clara7)
+	jugador1.agregarFichas(clara8)
+	jugador1.agregarFichas(clara9)
+	jugador1.agregarFichas(clara10)
+	jugador1.agregarFichas(clara11)
+	jugador1.agregarFichas(clara12)
+	
 	
 	var oscura1=new FichaOscura(position=game.at(5,7))
 	var oscura2=new FichaOscura(position=game.at(7,7))
@@ -39,6 +53,20 @@ program damas {
 	var oscura10=new FichaOscura(position=game.at(7,5))
 	var oscura11=new FichaOscura(position=game.at(9,5))
 	var oscura12=new FichaOscura(position=game.at(11,5))
+	
+	jugador2.agregarFichas(oscura1)
+	jugador2.agregarFichas(oscura2)
+	jugador2.agregarFichas(oscura3)
+	jugador2.agregarFichas(oscura4)
+	jugador2.agregarFichas(oscura5)
+	jugador2.agregarFichas(oscura6)
+	jugador2.agregarFichas(oscura7)
+	jugador2.agregarFichas(oscura8)
+	jugador2.agregarFichas(oscura9)
+	jugador2.agregarFichas(oscura10)
+	jugador2.agregarFichas(oscura11)
+	jugador2.agregarFichas(oscura12)
+		
 		
 	game.addVisual(clara1)
 	game.addVisual(clara2)
@@ -70,16 +98,18 @@ program damas {
 	
 // Teclado
 
-	keyboard.up().onPressDo { marcoSelector.move(marcoSelector.position().up(1)) }
-	keyboard.down().onPressDo { marcoSelector.move(marcoSelector.position().down(1)) }
-	keyboard.left().onPressDo { marcoSelector.move(marcoSelector.position().left(1)) }
-	keyboard.right().onPressDo { marcoSelector.move(marcoSelector.position().right(1)) }
-	keyboard.s().onPressDo {marcoSelector.asignarFicha(marcoSelector.position())}
-	keyboard.c().onPressDo {marcoSelector.colocarFicha(marcoSelector.position())}
+	keyboard.up().onPressDo { marcoSelector.movete(marcoSelector.position().up(1)) }
+	keyboard.down().onPressDo { marcoSelector.movete(marcoSelector.position().down(1)) }
+	keyboard.left().onPressDo { marcoSelector.movete(marcoSelector.position().left(1)) }
+	keyboard.right().onPressDo { marcoSelector.movete(marcoSelector.position().right(1)) }
+	
+	//SELECCIONA FICHA
+	keyboard.s().onPressDo {marcoSelector.tomaFicha(marcoSelector.position())}
+	//MUEVE LA FICHA	
+	keyboard.m().onPressDo {marcoSelector.moveFicha(marcoSelector.position())}
 
 //	START
 	game.start()
-
 }	
 
 /* 

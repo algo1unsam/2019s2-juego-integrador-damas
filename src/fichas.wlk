@@ -1,16 +1,24 @@
 import wollok.game.*
+import tablero.*
+import jugadores.*
 
 class Ficha {
 	var property position
+	//var _esReina = false
 	 	
 	method move(nuevaPosicion) {
 		if(self.puedoMoverme(nuevaPosicion)){
-			self.position(nuevaPosicion)
+			position = nuevaPosicion
+			turnero.cambiaTurno()
+			
 		}
 	}
 	
 	method puedoMoverme(posicion){
-		return (posicion.x()==self.position().x()+1 or posicion.x()==self.position().x()-1) and posicion.y()==self.position().y()+1*self.haciaDonde()
+		return (posicion.x()==position.x()+1 or 
+				posicion.x()==position.x()-1) 
+				and 
+				(posicion.y()==position.y()+1*self.haciaDonde())
 	} 
 	
 	method haciaDonde()
