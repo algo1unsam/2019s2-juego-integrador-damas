@@ -9,6 +9,7 @@ class Ficha {
 	method move(nuevaPosicion) {
 		if (self.puedoMoverme(nuevaPosicion) or self.puedoComer(nuevaPosicion)) {
 			position = nuevaPosicion
+			marcoSelector.soltaFicha()
 			turnero.cambiaTurno()
 		}
 	}
@@ -22,6 +23,7 @@ class Ficha {
 	} 
 	
 	method puedoComer(posicion){
+		
 		//1) LA POSICIÓN DESTINO ESTÁ VACIA Y
 		return marcoSelector.estaVacio()
 		//2) ME MOVÍ DOS POSICIONES EN DIAGONAL Y
@@ -33,8 +35,10 @@ class Ficha {
 		//3)LA POSICION ANTERIOR EN DIAGONAL TIENE FICHA DE CONTRINCANTE				
 				(if(marcoSelector.masDerechaQueFichaSeleccionada())
 					game.getObjectsIn(game.at(position.x()+1,position.y()+self.haciaDonde())).all({e=>not turnero.turnoDe().misFichas().contains(e)})
+					and game.getObjectsIn(game.at(position.x()+1,position.y()+self.haciaDonde()))!=[]
 				else
 					game.getObjectsIn(game.at(position.x()-1,position.y()+self.haciaDonde())).all({e=>not turnero.turnoDe().misFichas().contains(e)})
+					and game.getObjectsIn(game.at(position.x()-1,position.y()+self.haciaDonde()))!=[]
 				)
 				
 		//=>PUEDO COMER

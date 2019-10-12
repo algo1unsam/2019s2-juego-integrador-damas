@@ -15,7 +15,7 @@ object tablero {
 object marcoSelector {
 
 	var property position = game.at(4, 2)
-	var property fichaSeleccionada
+	var property fichaSeleccionada=null
 
 	method tomaFicha(posicion) {
 		game.colliders(self).forEach{ ficha =>
@@ -27,6 +27,10 @@ object marcoSelector {
 
 	method moveFicha(posicion) {
 		fichaSeleccionada.move(posicion)
+		
+	}
+	
+	method soltaFicha(){
 		fichaSeleccionada = null
 	}
 
