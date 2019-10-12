@@ -9,7 +9,7 @@ object tablero {
 	method image() {
 		return "tablero.jpg"
 	}
-
+ 
 }
 
 object marcoSelector {
@@ -55,9 +55,7 @@ object marcoSelector {
 	}
 	
 	method estaVacio(){
-				
 		return game.colliders(self).all{elemento => elemento == self}
-		
 	}
 	
 	method masDerechaQueFichaSeleccionada(){
@@ -69,25 +67,24 @@ object marcoSelector {
 object turnero {
 
 	var jugadorEnTurno = jugador1
-
+	//SET DE JUGADORES
+	const jugadores = [jugador1,jugador2]
+	
+	
 	method turnoDe() {
 		return jugadorEnTurno
 	}
-
-	method cambiaTurno() {
-		if (jugadorEnTurno.equals(jugador1)) {
-			jugadorEnTurno = jugador2
-			game.say(marcoSelector, "Turno jugador 2")
-		} else {
-			jugadorEnTurno = jugador1
-			game.say(marcoSelector, "Turno jugador 1")
-		}
-		//El marcador cambia al comenzar el turno de cada jugador (así actualiza si hubo alguna ficha comida en el turno anterior)
+	
+	method cambiaTurno(jugador){
+		jugadorEnTurno = jugadores.find({e=>e!=jugador})
+		game.say(marcoSelector, "Turno de: " + jugadorEnTurno.nombre())
+		
 		var cuantasFichas = jugadorEnTurno.misFichas().size()
 		var decena = cuantasFichas / 10
 		var unidad = cuantasFichas % (10)
 		jugadorEnTurno.decenas().asignarNumero(decena.truncate(0))
 		jugadorEnTurno.unidades().asignarNumero(unidad)
+		
 	}
 
 }

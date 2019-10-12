@@ -4,14 +4,16 @@ import jugadores.*
 
 class Ficha {
 	var property position
+	
+	
 	//var _esReina = false
 	 	
 	method move(nuevaPosicion) {
 		if (self.puedoMoverme(nuevaPosicion) or self.puedoComer(nuevaPosicion)) {
 			position = nuevaPosicion
 			marcoSelector.soltaFicha()
-			turnero.cambiaTurno()
-		}
+			self.pertenezcoA().yaMovi()
+		} 
 	}
 	
 	method puedoMoverme(posicion){
@@ -43,20 +45,27 @@ class Ficha {
 				
 		//=>PUEDO COMER
 	}
-	
-	
+			
 	//METODOS SOBREESCRITOS EN CLASES HIJAS
 	method haciaDonde()
-
+	method image()
+	method pertenezcoA()
 }
 
 class FichaClara inherits Ficha {
+	
 	override method haciaDonde(){
 		return 1
 	} 
 	
-	method image(){return "fichaClara.png"}
-
+	override method image(){
+		return "fichaClara.png"
+	}
+	
+	override method pertenezcoA(){
+		return jugador1
+	}
+	
 }
 
 class FichaOscura inherits Ficha {
@@ -65,7 +74,13 @@ class FichaOscura inherits Ficha {
 		return -1
 	}
 	
-	method image(){return "fichaOscura.png"}
-
+	override method image(){
+		return "fichaOscura.png"
+	}
+	
+	override method pertenezcoA(){
+		return jugador2
+	}
+		
 }
 
