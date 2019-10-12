@@ -21,7 +21,7 @@ object jugador1 inherits Jugador{
 	var property decenas=claraDec
 	
 	
-	var position = game.at(1, 6)
+	var property position = game.at(1, 6)
 
 	method image() {
 		return "jugador1.jpg"
@@ -33,7 +33,7 @@ object jugador2 inherits Jugador{
 	var property unidades=oscuraUni
 	var property decenas=oscuraDec
 	
-	var position = game.at(1, 3)
+	var property position = game.at(1, 3)
 
 	method image() {
 		return "jugador2.jpg"

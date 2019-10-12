@@ -49,6 +49,16 @@ object marcoSelector {
 	method image() {
 		return "marco.png"
 	}
+	
+	method estaVacio(){
+				
+		return game.colliders(self).all{elemento => elemento == self}
+		
+	}
+	
+	method masDerechaQueFichaSeleccionada(){
+		return position.x() - fichaSeleccionada.position().x() > 0
+	}
 
 }
 
@@ -100,25 +110,25 @@ class Marcador {
 
 object claraDec inherits Marcador {
 
-	var position = game.at(1, 5)
+	var property position = game.at(1, 5)
 
 }
 
 object claraUni inherits Marcador {
 
-	var position = game.at(2, 5)
+	var property position = game.at(2, 5)
 
 }
 
 object oscuraDec inherits Marcador {
 
-	var position = game.at(1, 2)
+	var property position = game.at(1, 2)
 
 }
 
 object oscuraUni inherits Marcador {
 
-	var position = game.at(2, 2)
+	var property position = game.at(2, 2)
 
 }
 

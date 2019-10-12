@@ -7,22 +7,42 @@ class Ficha {
 	//var _esReina = false
 	 	
 	method move(nuevaPosicion) {
-		if(self.puedoMoverme(nuevaPosicion)){
+		if (self.puedoMoverme(nuevaPosicion) or self.puedoComer(nuevaPosicion)) {
 			position = nuevaPosicion
 			turnero.cambiaTurno()
-			
 		}
 	}
 	
 	method puedoMoverme(posicion){
-		return (posicion.x()==position.x()+1 or 
-				posicion.x()==position.x()-1) 
+		return (posicion.x()==position.x()+1 or posicion.x()==position.x()-1) 
 				and 
-				(posicion.y()==position.y()+1*self.haciaDonde())
+				(posicion.y()==position.y()+self.haciaDonde())
+				and
+				marcoSelector.estaVacio()	
 	} 
 	
-	method haciaDonde()
+	method puedoComer(posicion){
+		//1) LA POSICIÓN DESTINO ESTÁ VACIA Y
+		return marcoSelector.estaVacio()
+		//2) ME MOVÍ DOS POSICIONES EN DIAGONAL Y
+				and
+				(posicion.x()==position.x()+2 or posicion.x()==position.x()-2) 
+				and 
+				(posicion.y()==position.y()+2*self.haciaDonde())
+				and
+		//3)LA POSICION ANTERIOR EN DIAGONAL TIENE FICHA DE CONTRINCANTE				
+				(if(marcoSelector.masDerechaQueFichaSeleccionada())
+					game.getObjectsIn(game.at(position.x()+1,position.y()+self.haciaDonde())).all({e=>not turnero.turnoDe().misFichas().contains(e)})
+				else
+					game.getObjectsIn(game.at(position.x()-1,position.y()+self.haciaDonde())).all({e=>not turnero.turnoDe().misFichas().contains(e)})
+				)
+				
+		//=>PUEDO COMER
+	}
 	
+	
+	//METODOS SOBREESCRITOS EN CLASES HIJAS
+	method haciaDonde()
 
 }
 
@@ -36,6 +56,7 @@ class FichaClara inherits Ficha {
 }
 
 class FichaOscura inherits Ficha {
+	
 	override method haciaDonde(){
 		return -1
 	}

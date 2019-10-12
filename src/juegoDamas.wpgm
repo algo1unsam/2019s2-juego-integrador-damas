@@ -94,38 +94,7 @@ program damas {
 	game.start()
 }	
 
-/* 
-//	CONFIG	
-	game.title("Granjaville")
-	game.height(12)
-	game.width(12)
-	game.ground("ground.png")
 
-//	VISUALES
-	game.addVisual(hector)
-	var mercado1=new Mercado(position=game.at(0,0),monedas=1000)
-	var mercado2=new Mercado(position=game.at(9,9),monedas=5000)
-	game.addVisual(mercado1)
-	game.addVisual(mercado2)
 
-//	TECLADO
 
-	
-	keyboard.up().onPressDo { hector.move(hector.position().up(1)) }
-	keyboard.down().onPressDo { hector.move(hector.position().down(1)) }
-	keyboard.left().onPressDo { hector.move(hector.position().left(1)) }
-	keyboard.right().onPressDo { hector.move(hector.position().right(1)) }
-	keyboard.m().onPressDo { hector.sembra(maiz)}
-	keyboard.t().onPressDo { hector.sembra(trigo)}
-	keyboard.o().onPressDo { hector.sembra(tomaco)}
-	keyboard.r().onPressDo { hector.hacerAlgoALasPlantas("regar")}
-	keyboard.c().onPressDo { hector.hacerAlgoALasPlantas("cosechar")}
-	keyboard.v().onPressDo { game.colliders(hector).forEach{cosa=>if(cosa.sosMercado()){cosa.comprarAHector()}}}
-	keyboard.space().onPressDo { juego.queTiene(hector)}
-	keyboard.z().onPressDo { juego.queTiene(mercado1)}
-	keyboard.x().onPressDo { juego.queTiene(mercado2)}
-	
-//	START
-	game.start()
-}
-*/	
+
