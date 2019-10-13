@@ -4,6 +4,7 @@ import jugadores.*
 
 class Ficha {
 	var property position
+	var queDiagonal=null
 	//var _esReina = false
 	
 	method diagonalDerecha(){
@@ -16,42 +17,36 @@ class Ficha {
 		 	
 	method validar(nuevaPosicion) {
 		if(self.puedoMoverme(nuevaPosicion)) {
-			self.soloMovete(nuevaPosicion)			
+			self.movete(nuevaPosicion)			
 		}
 		if(self.puedoComer(nuevaPosicion)){
-			self.come(nuevaPosicion, self.tengoParaComer())
+			self.come(nuevaPosicion, tablero.loQueHayEn(queDiagonal))
 		}
 	}
 	
 	//SE MUEVE UNA POSICIÓN QUE LE LLEGA DEL MARCO SELECTOR
-	method soloMovete(nuevaPosicion){
+	method movete(nuevaPosicion){
 		position = nuevaPosicion
 		self.terminarMovimiento()
 	}
 	
-	//COME FICHA CONTRINCANTE
+	//COME FICHA CONTRINCANTE Y LUEGO SE MUEVE
 	method come(nuevaPosicion, ficha){
-		//tablero.quitarFicha(ficha) NO FUNCIONA
-		turnero.contrincante().quitarFicha(ficha)
-		position = nuevaPosicion
-		self.terminarMovimiento()
+		ficha.forEach{e=>tablero.quitarFicha(e)}
+		ficha.forEach{e=>turnero.contrincante().quitarFicha(e)}
+		self.movete(nuevaPosicion)
 	}
 	
 	//VALIDA SI TIENE PARA COMER
 	method tengoParaComer(){
 				
 		if(marcoSelector.masDerechaQueFichaSeleccionada()){
-			if(tablero.loQueHayEn(self.diagonalDerecha())!=null and tablero.loQueHayEn(self.diagonalDerecha()).all({e=>not self.pertenezcoA().misFichas().contains(e)})){
-				return tablero.loQueHayEn(self.diagonalDerecha())
-			}
-		}
-		else{			
-			if(tablero.loQueHayEn(self.diagonalIzquierda())!=null and tablero.loQueHayEn(self.diagonalIzquierda()).all({e=>not self.pertenezcoA().misFichas().contains(e)})){
-				return tablero.loQueHayEn(self.diagonalIzquierda())
-			}
+			queDiagonal=self.diagonalDerecha()
+		}else{			
+			queDiagonal=self.diagonalIzquierda()
 		}
 		
-		return null	
+		return tablero.loQueHayEn(queDiagonal)!=null and tablero.loQueHayEn(queDiagonal).all({e=>not self.pertenezcoA().misFichas().contains(e)})	
 	}
 
 	//SE VALIDA MOVIMIENTO EN DIAGONAL SIMPLE
@@ -78,7 +73,7 @@ class Ficha {
 				(posicion.y()==position.y()+2*self.haciaDonde())
 				and
 		//3)LA POSICION EN DIAGONAL TIENE FICHA DE CONTRINCANTE				
-				self.tengoParaComer()!=null
+				self.tengoParaComer()
 				
 		//=>PUEDE COMER
 	}

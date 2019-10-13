@@ -18,8 +18,7 @@ object tablero {
 	}
 	
 	method quitarFicha(ficha){
-		
-		//game.removeVisual(game.allVisuals().all({e=>e.equals(ficha)}))
+		game.removeVisual(ficha)
 	}
  
 }
@@ -97,6 +96,10 @@ object turnero {
 		jugadorEnTurno.decenas().asignarNumero(decena.truncate(0))
 		jugadorEnTurno.unidades().asignarNumero(unidad)
 		
+		jugadorEnTurno.estado(1)
+		jugadorEnTurno.image()
+		self.contrincante().estado(0)
+		self.contrincante().image()		
 	}
 	//RETORNA AL JUGADOR QUE ESTÁ ESPERANDO EL MOVIMIENTO
 	method contrincante(){
@@ -106,9 +109,8 @@ object turnero {
 }
 
 class Marcador {
-
-	var listaDeNumeros = [ "numCero.jpg", "numUno.jpg", "numDos.jpg", "numTres.jpg", "numCuatro.jpg", "numCinco.jpg", "numSeis.jpg", "numSiete.jpg", "numOcho.jpg", "numNueve.jpg" ]
-	var numero = 0
+	var listaDeNumeros = [ "numCero.png", "numUno.png", "numDos.png", "numTres.png", "numCuatro.png", "numCinco.png", "numSeis.png", "numSiete.png", "numOcho.png", "numNueve.png" ]
+	var numero
 
 	method listaDeNumeros() {
 		return listaDeNumeros
@@ -125,27 +127,4 @@ class Marcador {
 
 }
 
-object claraDec inherits Marcador {
-
-	var property position = game.at(1, 5)
-
-}
-
-object claraUni inherits Marcador {
-
-	var property position = game.at(2, 5)
-
-}
-
-object oscuraDec inherits Marcador {
-
-	var property position = game.at(1, 2)
-
-}
-
-object oscuraUni inherits Marcador {
-
-	var property position = game.at(2, 2)
-
-}
 

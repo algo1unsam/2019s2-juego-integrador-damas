@@ -30,14 +30,16 @@ class Jugador{
 }
 
 object jugador1 inherits Jugador{
-	var property unidades=claraUni
-	var property decenas=claraDec
+	var property unidades
+	var property decenas
+	var property estado=1
+	var imagenes=["jugador1.png","jugador1EnTurno.png"]
 	
 	
 	var property position = game.at(1, 6)
 
 	method image() {
-		return "jugador1.jpg"
+		return imagenes.get(estado)
 	}
 	
 	override method nombre(){
@@ -47,14 +49,15 @@ object jugador1 inherits Jugador{
 }
 
 object jugador2 inherits Jugador{
-	var property unidades=oscuraUni
-	var property decenas=oscuraDec
-	
+	var property unidades
+	var property decenas
+	var property estado=0
+	var imagenes=["jugador2.png","jugador2EnTurno.png"]	
 	
 	var property position = game.at(1, 3)
 
 	method image() {
-		return "jugador2.jpg"
+		return imagenes.get(estado)
 	}
 	
 	override method nombre(){

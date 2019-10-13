@@ -69,14 +69,24 @@ program damas {
 	game.addVisual(oscura10)
 	game.addVisual(oscura11)
 	game.addVisual(oscura12)
+
+	var claraDec = new Marcador (numero=1)
+	var claraUni = new Marcador (numero=2)
+	var oscuraDec = new Marcador (numero=1)
+	var oscuraUni = new Marcador (numero=2)
+	
+	jugador1.decenas(claraDec)	
+	jugador1.unidades(claraUni)
+	jugador2.decenas(oscuraDec)	
+	jugador2.unidades(oscuraUni)
 		
 	game.addVisual(marcoSelector)
 	game.addVisual(jugador1)
 	game.addVisual(jugador2)
-	game.addVisual(claraDec)
-	game.addVisual(claraUni)
-	game.addVisual(oscuraDec)
-	game.addVisual(oscuraUni)
+	game.addVisualIn(claraDec,game.at(1, 6))
+	game.addVisualIn(claraUni,game.at(2, 6))
+	game.addVisualIn(oscuraDec,game.at(1, 3))
+	game.addVisualIn(oscuraUni,game.at(2, 3))
 	
 // Teclado
 
