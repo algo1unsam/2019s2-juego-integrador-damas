@@ -89,6 +89,8 @@ program damas {
 	keyboard.s().onPressDo {marcoSelector.tomaFicha(marcoSelector.position())}
 	//MUEVE LA FICHA	
 	keyboard.m().onPressDo {marcoSelector.moveFicha(marcoSelector.position())}
+	
+
 
 //	START
 	game.start()

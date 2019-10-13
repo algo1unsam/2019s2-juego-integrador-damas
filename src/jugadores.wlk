@@ -16,8 +16,15 @@ class Jugador{
 		fichasRestantes.addAll(ficha)
 	}
 	
+	//JUGADOR INDICA QUE YA MOVIÓ
 	method yaMovi(){
 		turnero.cambiaTurno(self)
+	}
+	
+	//SE ELIMINA LA FICHA QUE SE PASA POR ARGUMENTO
+	method quitarFicha(ficha){
+		fichasRestantes.remove(ficha)
+		
 	}
 	
 }

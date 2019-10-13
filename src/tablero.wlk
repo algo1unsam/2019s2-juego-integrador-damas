@@ -9,6 +9,18 @@ object tablero {
 	method image() {
 		return "tablero.jpg"
 	}
+	
+	method loQueHayEn(posicion){
+		if(game.getObjectsIn(posicion)!=[])
+			return game.getObjectsIn(posicion)
+		else
+			return null			
+	}
+	
+	method quitarFicha(ficha){
+		
+		//game.removeVisual(game.allVisuals().all({e=>e.equals(ficha)}))
+	}
  
 }
 
@@ -24,16 +36,17 @@ object marcoSelector {
 			}
 		}
 	}
-
+	//EL SELECTOR PRUEBA MOVER FICHA
 	method moveFicha(posicion) {
-		fichaSeleccionada.move(posicion)
-		
+		fichaSeleccionada.validar(posicion)
 	}
 	
+	//EL SELECTOR SUELTA LA FICHA
 	method soltaFicha(){
 		fichaSeleccionada = null
 	}
-
+	
+	//MUEVE EL MARCO SELECTOR
 	method movete(nuevaPosicion) {
 		position = nuevaPosicion
 		if (position.x() > 11) {
@@ -67,7 +80,6 @@ object marcoSelector {
 object turnero {
 
 	var jugadorEnTurno = jugador1
-	//SET DE JUGADORES
 	const jugadores = [jugador1,jugador2]
 	
 	
@@ -85,6 +97,10 @@ object turnero {
 		jugadorEnTurno.decenas().asignarNumero(decena.truncate(0))
 		jugadorEnTurno.unidades().asignarNumero(unidad)
 		
+	}
+	//RETORNA AL JUGADOR QUE ESTÁ ESPERANDO EL MOVIMIENTO
+	method contrincante(){
+		return jugadores.find({jugador=>not jugador.equals(jugadorEnTurno)})
 	}
 
 }
