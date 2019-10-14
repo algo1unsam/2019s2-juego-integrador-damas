@@ -18,6 +18,9 @@ class Jugador{
 	
 	//JUGADOR INDICA QUE YA MOVIÓ
 	method yaMovi(){
+		//Finaliza el conteo del turno
+		contador.terminaConteoDe("controlarTurno")
+		//Finaliza el turno
 		turnero.cambiaTurno(self)
 	}
 	
@@ -32,14 +35,14 @@ class Jugador{
 object jugador1 inherits Jugador{
 	var property unidades
 	var property decenas
-	var property estado=1
+	var property estado=enRojo
 	var imagenes=["jugador1.png","jugador1EnTurno.png"]
 	
 	
 	var property position = game.at(1, 6)
 
 	method image() {
-		return imagenes.get(estado)
+		return imagenes.get(estado.devolvePosicion())
 	}
 	
 	override method nombre(){
@@ -51,13 +54,13 @@ object jugador1 inherits Jugador{
 object jugador2 inherits Jugador{
 	var property unidades
 	var property decenas
-	var property estado=0
+	var property estado=enBlanco
 	var imagenes=["jugador2.png","jugador2EnTurno.png"]	
 	
 	var property position = game.at(1, 3)
 
 	method image() {
-		return imagenes.get(estado)
+		return imagenes.get(estado.devolvePosicion())
 	}
 	
 	override method nombre(){
