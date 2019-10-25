@@ -66,4 +66,4 @@ object jugador2 inherits Jugador{
 	override method nombre(){
 		return "Jugador 2"
 	}
-}
+} 
