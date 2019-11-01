@@ -79,8 +79,7 @@ object marcoSelector {
 object turnero {
 
 	var jugadorEnTurno = jugador1
-	const jugadores = [jugador1,jugador2]
-	
+	const jugadores = [jugador1,jugador2]	
 	
 	method turnoDe() {
 		return jugadorEnTurno
@@ -90,16 +89,21 @@ object turnero {
 		jugadorEnTurno = jugadores.find({e=>e!=jugador})
 		game.say(marcoSelector, "Turno de: " + jugadorEnTurno.nombre())
 		
+		//Indica al marcador del turno que empieza la cantidad de fichas que le queda a es jugador 
 		var cuantasFichas = jugadorEnTurno.misFichas().size()
 		var decena = cuantasFichas / 10
 		var unidad = cuantasFichas % (10)
 		jugadorEnTurno.decenas().asignarNumero(decena.truncate(0))
 		jugadorEnTurno.unidades().asignarNumero(unidad)
 		
-		jugadorEnTurno.estado(1)
+		//Cambia las imagenes del jugadorEnTurno y del contrincante
+		jugadorEnTurno.estado(enRojo)
 		jugadorEnTurno.image()
-		self.contrincante().estado(0)
+		self.contrincante().estado(enBlanco)
 		self.contrincante().image()		
+		
+		//Inicia el contador de turno para el turno que empieza
+		contador.iniciarConteoTurno(jugadorEnTurno)
 	}
 	//RETORNA AL JUGADOR QUE ESTÁ ESPERANDO EL MOVIMIENTO
 	method contrincante(){
@@ -127,4 +131,84 @@ class Marcador {
 
 }
 
+object contador{
+	var property position = game.at(0, 0)
+	//Atributo de tiempo límite por juego
+	var property tiempo=600
+	//Atributos para cambiar el marcador
+	var property mDecenas
+	var property mUnidades
+	var property sDecenas	
+	var property sUnidades
+	//Atributo para el color de las Imagenes
+	var property estado=enBlanco
+	var imagenes = [ "contador.png", "contadorAlerta.png"]
+	//Atributo de tiempo límite por turno
+	var tiempoDeTurno=15
+	
+	method image() {
+		return imagenes.get(estado.devolvePosicion())
+	}
+	
+	//Contador general de juego
+	method iniciar(){
+		game.onTick(1000, "descontarUnSegundo", { 
+			tiempo-=1
+			var minDecena = tiempo / 600
+			var minUnidad = tiempo / 60
+			var segDecena = tiempo % (60) / 10
+			var segUnidad = (segDecena - segDecena.truncate(0))*10
+			self.mDecenas().asignarNumero(minDecena.truncate(0))
+			self.mUnidades().asignarNumero(minUnidad.truncate(0))
+			self.sDecenas().asignarNumero(segDecena.truncate(0))
+			self.sUnidades().asignarNumero(segUnidad.truncate(0))
+			
+			//Cambia de color a falta de un minuto
+			if (tiempo==60){
+				self.estado(enRojo)
+				self.image()
+			}
+			
+			//Si el tiempo llega a cero termina el conteo y cierra el juega (accá debería ir a la placa de empate 
+			//en vez de cerrar el juego.
+			if (tiempo==0){
+				self.terminaConteoDe("descontarUnSegundo")
+				game.stop()
+			}
+		})
+	}
+	
+	//Conteo para el turno del jugador (el tiempo lo determina el atributo tiempoturno)
+	method iniciarConteoTurno(jugador){
+		//Se carga el tiempo de turno en una variable interna para que la original no se modifique ya que se necesita en cada turno
+		var tiempoTurno=tiempoDeTurno
+		game.onTick(1000, "controlarTurno", { 
+			tiempoTurno-=1
+			if (tiempoTurno==0){
+				self.terminaConteoDe("controlarTurno")
+				marcoSelector.soltaFicha()
+				turnero.cambiaTurno(jugador)
+				
+			}
+		})
+	}
+	
+	//Termina cualquier evento que se le pase por parametro
+	method terminaConteoDe(nombre){
+		game.removeTickEvent(nombre)
+	}
+	
+}
 
+//OBJETOS PARA MANEJAR LA LISTA DE IMAGENES DE LOS OBJETOS QUE PUEDEN TENER IMAGEN EN BLANCO O EN COLOR
+object enBlanco{
+	method devolvePosicion(){
+		return 0
+	} 
+}
+
+object enRojo{
+	method devolvePosicion(){
+		return 1
+	} 
+}
