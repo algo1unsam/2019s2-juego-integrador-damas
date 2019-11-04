@@ -7,7 +7,7 @@ object tablero {
 	var property position = game.at(4, 0)
 
 	method image() {
-		return "tablero.jpg"
+		return "tableroClasico.jpg"
 	}
 	
 	method loQueHayEn(posicion){
@@ -21,6 +21,21 @@ object tablero {
 		game.removeVisual(ficha)
 	}
  
+}
+
+object tableroArgento {
+	method image() = "tableroArgento.jpeg"
+	method position() = game.at(4,0)
+}
+
+object tableroWollok {
+	method image() = "tableroWollok.jpeg"
+	method position() = game.at(4,0)
+}
+
+object tableroMadera {
+	method image() = "tableroMadera.jpg"
+	method position() = game.at(4,0)
 }
 
 object marcoSelector {

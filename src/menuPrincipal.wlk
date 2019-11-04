@@ -31,6 +31,9 @@ object juego {
 	}
 
 	method opciones() {
+		game.removeVisual(opcionOpciones)
+		opciones.navegar()
+		self.estadoActual(opciones)
 	}
 
 	method reglas() {
@@ -43,11 +46,22 @@ object juego {
 
 object jugando {
 
-	var property primeraVez
+	var property tablero
 
 	method image() = "fondoMadera.jpg"
 
 	method position() = game.at(0, 0)
+	
+	method accionS() { marcoSelector.tomaFicha(marcoSelector.position()) }
+	method accionM() { marcoSelector.moveFicha(marcoSelector.position()) }
+	method accionP() { juego.pausar() }
+	method accionIzq() { marcoSelector.movete(marcoSelector.position().left(1)) }
+	method accionDer() { marcoSelector.movete(marcoSelector.position().right(1)) }
+	method accionUp() { marcoSelector.movete(marcoSelector.position().up(1)) }
+	method accionDown(){ marcoSelector.movete(marcoSelector.position().down(1)) }
+	method accionEnter() {}
+	method accionBackspace() {}
+	
 
 	method activarse() {
 		
@@ -152,6 +166,16 @@ object pausado {
 	method activarse() {
 		game.addVisual(self)
 	}
+	
+	method accionS() {}
+	method accionM() {}
+	method accionP() {}
+	method accionIzq() {}
+	method accionDer() {}
+	method accionUp() {}
+	method accionDown() {}
+	method accionEnter() { juego.reanudarJuego() }
+	method accionBackspace() { juego.volverMenu() }
 
 }
 
@@ -159,11 +183,21 @@ object menuPrincipal {
 
 	var property opcionAnterior = null
 	var property opcionActual = opcionJugar
-	var property ultimaOpcion
+	
 
 	method navegar() {
 		game.addVisual(opcionActual)
 	}
+
+	method accionS() {}
+	method accionM() {}
+	method accionP() {}
+	method accionIzq() {}
+	method accionDer() {}
+	method accionUp() { game.sound("menuSonido.ogg") opcionAnterior = opcionActual  opcionActual = opcionActual.opcionDeArriba() game.addVisual(opcionActual) if ( opcionActual != null ) game.removeVisual(opcionAnterior)  }
+	method accionDown() { game.sound("menuSonido.ogg") opcionAnterior = opcionActual  opcionActual = opcionActual.opcionDeAbajo() game.addVisual(opcionActual) if ( opcionActual != null ) game.removeVisual(opcionAnterior)  }
+	method accionEnter() { game.sound("entrarOpcion.ogg") opcionActual.accion() }
+	method accionBackspace() {}
 
 }
 
@@ -202,6 +236,16 @@ object reglas {
 	method image() = "Reglas.jpg"
 
 	method position() = game.at(0, 0)
+	
+	method accionS() {}
+	method accionM() {}
+	method accionP() {}
+	method accionIzq() {}
+	method accionDer() {}
+	method accionUp() {}
+	method accionDown() {}
+	method accionEnter() {}
+	method accionBackspace() { game.sound("entrarOpcion.ogg") menuPrincipal.opcionAnterior(null) menuPrincipal.opcionActual(opcionJugar) game.allVisuals().forEach({visual => game.removeVisual(visual)}) game.addVisual(menuPrincipal.opcionActual()) juego.estadoActual(menuPrincipal)  }
 
 }
 
@@ -219,6 +263,100 @@ object opcionOpciones {
 	}
 
 }
+
+object opciones { 
+	
+	var opcionAnterior = null
+	var property ultimaOpcion
+	var property opcionActual = ultimaOpcion
+	var property seleccionado
+	
+	method navegar(){ game.addVisual(opcionActual) }
+	
+	method accionS() {}
+	method accionM() {}
+	method accionP() {}
+	method accionIzq() {}
+	method accionDer() {}
+	method accionUp() { game.sound("menuSonido.ogg") opcionAnterior = opcionActual  opcionActual = opcionActual.opcionDeArriba() game.addVisual(opcionActual) if ( opcionActual != null ) game.removeVisual(opcionAnterior)  }
+	method accionDown() { game.sound("menuSonido.ogg") opcionAnterior = opcionActual  opcionActual = opcionActual.opcionDeAbajo() game.addVisual(opcionActual) if ( opcionActual != null ) game.removeVisual(opcionAnterior)  }
+	method accionEnter() { game.sound("entrarOpcion.ogg") opcionActual.accion() }
+	method accionBackspace() { game.sound("entrarOpcion.ogg") menuPrincipal.opcionAnterior(null) menuPrincipal.opcionActual(opcionJugar) game.allVisuals().forEach({visual => game.removeVisual(visual)}) game.addVisual(menuPrincipal.opcionActual()) juego.estadoActual(menuPrincipal)  }
+	
+}
+
+object opcionTableroClasico {
+
+	var property opcionDeArriba = opcionTableroWollok
+	var property opcionDeAbajo = opcionTableroArgento
+
+	method image() = "opcionTableroClasico.jpg"
+
+	method position() = game.at(0, 0)
+	
+	method accion(){
+		jugando.tablero(tablero)
+		opciones.ultimaOpcion(self)
+		opciones.accionBackspace()
+	}
+
+}
+
+
+
+object opcionTableroArgento {
+
+	var property opcionDeArriba = opcionTableroClasico
+	var property opcionDeAbajo = opcionTableroMadera
+
+	method image() = "opcionTableroArgento.jpg"
+
+	method position() = game.at(0, 0)
+	
+	method accion(){
+		jugando.tablero(tableroArgento)
+		opciones.ultimaOpcion(self)
+		opciones.accionBackspace()
+	}
+
+}
+
+
+object opcionTableroWollok {
+
+	var property opcionDeArriba = opcionTableroMadera
+	var property opcionDeAbajo = opcionTableroClasico
+
+	method image() = "opcionTableroWollok.jpg"
+
+	method position() = game.at(0, 0)
+	
+	method accion(){
+		jugando.tablero(tableroWollok)
+		opciones.ultimaOpcion(self)
+		opciones.accionBackspace()
+	}
+
+}
+
+object opcionTableroMadera {
+
+	var property opcionDeArriba = opcionTableroArgento
+	var property opcionDeAbajo = opcionTableroWollok
+
+	method image() = "opcionTableroMadera.jpg"
+
+	method position() = game.at(0, 0)
+	
+	method accion(){
+		jugando.tablero(tableroMadera)
+		opciones.ultimaOpcion(self)
+		opciones.accionBackspace()
+	}
+
+}
+
+
 
 object opcionSalir {
 
