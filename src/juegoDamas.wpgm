@@ -5,22 +5,25 @@ import jugadores.*
 import menuPrincipal.*
 
 program damas {
-
+	
 //	CONFIG	
 	game.title("Damas")
 	game.height(8)
 	game.width(12)
 	
+// TECLADO
+		keyboard.s().onPressDo { if (juego.estadoActual().equals(jugando)) marcoSelector.tomaFicha(marcoSelector.position()) }
+		keyboard.m().onPressDo { if (juego.estadoActual().equals(jugando)) marcoSelector.moveFicha(marcoSelector.position()) }
+		keyboard.p().onPressDo { if (juego.estadoActual().equals(jugando)) juego.pausar() }
+		keyboard.enter().onPressDo { if (juego.estadoActual().equals(pausado)){ juego.reanudarJuego() } else if (juego.estadoActual().equals(menuPrincipal)){ game.sound("entrarOpcion.ogg") menuPrincipal.opcionActual().accion() } }
+		keyboard.left().onPressDo { if (juego.estadoActual().equals(jugando)) marcoSelector.movete(marcoSelector.position().left(1)) }
+		keyboard.right().onPressDo { if (juego.estadoActual().equals(jugando)) marcoSelector.movete(marcoSelector.position().right(1)) }
+		keyboard.up().onPressDo { if (juego.estadoActual().equals(jugando)){ marcoSelector.movete(marcoSelector.position().up(1))} else if (juego.estadoActual().equals(menuPrincipal)){ game.sound("menuSonido.ogg") menuPrincipal.opcionAnterior(menuPrincipal.opcionActual())  menuPrincipal.opcionActual(menuPrincipal.opcionActual().opcionDeArriba()) game.addVisual(menuPrincipal.opcionActual()) if ( not menuPrincipal.opcionActual().equals(null) ) game.removeVisual(menuPrincipal.opcionAnterior())  }} 
+		keyboard.down().onPressDo { if (juego.estadoActual().equals(jugando)){ marcoSelector.movete(marcoSelector.position().down(1))} else if (juego.estadoActual().equals(menuPrincipal)){ game.sound("menuSonido.ogg") menuPrincipal.opcionAnterior(menuPrincipal.opcionActual())  menuPrincipal.opcionActual(menuPrincipal.opcionActual().opcionDeAbajo()) game.addVisual(menuPrincipal.opcionActual()) if ( not menuPrincipal.opcionActual().equals(null) ) game.removeVisual(menuPrincipal.opcionAnterior())  }} 
+		keyboard.backspace().onPressDo { if (juego.estadoActual().equals(pausado)) juego.volverMenu() else if (juego.estadoActual().equals(reglas) or juego.estadoActual().equals(opcionOpciones)){ game.sound("entrarOpcion.ogg") menuPrincipal.opcionAnterior(null) menuPrincipal.opcionActual(opcionJugar) game.allVisuals().forEach({visual => game.removeVisual(visual)}) game.addVisual(menuPrincipal.opcionActual()) juego.estadoActual(menuPrincipal) }  }	
+	
+//	START
 	juego.estadoActual(menuPrincipal)
 	menuPrincipal.navegar()
-		
-
-
-//	START
 	game.start()
-}	
-
-
-
-
-
+}
