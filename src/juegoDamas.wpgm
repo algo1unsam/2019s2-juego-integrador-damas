@@ -12,15 +12,15 @@ program damas {
 	game.width(12)
 	
 // TECLADO
-		keyboard.s().onPressDo { juego.estadoActual().accionS() }
-		keyboard.m().onPressDo { juego.estadoActual().accionM() }
-		keyboard.p().onPressDo { juego.estadoActual().accionP() }
-		keyboard.enter().onPressDo { juego.estadoActual().accionEnter() }
-		keyboard.left().onPressDo { juego.estadoActual().accionIzq() }
-		keyboard.right().onPressDo { juego.estadoActual().accionDer() }
-		keyboard.up().onPressDo { juego.estadoActual().accionUp() } 
-		keyboard.down().onPressDo { juego.estadoActual().accionDown() } 
-		keyboard.backspace().onPressDo { juego.estadoActual().accionBackspace() }	
+	keyboard.s().onPressDo { juego.estadoActual().accionS() }
+	keyboard.m().onPressDo { juego.estadoActual().accionM() }
+	keyboard.p().onPressDo { juego.estadoActual().accionP() }
+	keyboard.enter().onPressDo { juego.estadoActual().accionEnter() }
+	keyboard.left().onPressDo { juego.estadoActual().accionIzq() }
+	keyboard.right().onPressDo { juego.estadoActual().accionDer() }
+	keyboard.up().onPressDo { juego.estadoActual().accionUp() } 
+	keyboard.down().onPressDo { juego.estadoActual().accionDown() } 
+	keyboard.backspace().onPressDo { juego.estadoActual().accionBackspace() }	
 	
 //	START
 	juego.estadoActual(menuPrincipal)

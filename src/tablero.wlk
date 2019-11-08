@@ -41,7 +41,7 @@ object marcoSelector {
 	}
 	//EL SELECTOR PRUEBA MOVER FICHA
 	method moveFicha(posicion) {
-		fichaSeleccionada.validar(posicion)
+		if (fichaSeleccionada != null) fichaSeleccionada.validar(posicion)
 	}
 	
 	//EL SELECTOR SUELTA LA FICHA

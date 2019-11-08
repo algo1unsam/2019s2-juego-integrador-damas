@@ -182,7 +182,7 @@ object menuPrincipal {
 	method accionDer() {}
 	method accionUp() { game.sound("menuSonido.ogg") opcionAnterior = opcionActual  opcionActual = opcionActual.opcionDeArriba() game.addVisual(opcionActual) if ( opcionActual != null ) game.removeVisual(opcionAnterior)  }
 	method accionDown() { game.sound("menuSonido.ogg") opcionAnterior = opcionActual  opcionActual = opcionActual.opcionDeAbajo() game.addVisual(opcionActual) if ( opcionActual != null ) game.removeVisual(opcionAnterior)  }
-	method accionEnter() { game.sound("entrarOpcion.ogg") opcionActual.accion() }
+	method accionEnter() { if (not opcionActual.equals(opcionSalir)) { game.sound("entrarOpcion.ogg") } opcionActual.accion() }
 	method accionBackspace() {}
 
 }
@@ -231,7 +231,7 @@ object reglas {
 	method accionUp() {}
 	method accionDown() {}
 	method accionEnter() {}
-	method accionBackspace() { game.sound("entrarOpcion.ogg") menuPrincipal.opcionAnterior(null) menuPrincipal.opcionActual(opcionJugar) game.allVisuals().forEach({visual => game.removeVisual(visual)}) game.addVisual(menuPrincipal.opcionActual()) juego.estadoActual(menuPrincipal)  }
+	method accionBackspace() { game.sound("entrarOpcion.ogg") menuPrincipal.opcionAnterior(opcionJugar) menuPrincipal.opcionActual(opcionReglas) game.allVisuals().forEach({visual => game.removeVisual(visual)}) game.addVisual(menuPrincipal.opcionActual()) juego.estadoActual(menuPrincipal)  }
 
 }
 
@@ -240,7 +240,7 @@ object opcionOpciones {
 	var property opcionDeArriba = opcionReglas
 	var property opcionDeAbajo = opcionSalir
 
-	method image() = "menuPrincipalOpciones.jpg"
+	method image() = "menuPrincipalTableros.jpg"
 
 	method position() = game.at(0, 0)
 
@@ -267,7 +267,7 @@ object opciones {
 	method accionUp() { game.sound("menuSonido.ogg") opcionAnterior = opcionActual  opcionActual = opcionActual.opcionDeArriba() game.addVisual(opcionActual) if ( opcionActual != null ) game.removeVisual(opcionAnterior)  }
 	method accionDown() { game.sound("menuSonido.ogg") opcionAnterior = opcionActual  opcionActual = opcionActual.opcionDeAbajo() game.addVisual(opcionActual) if ( opcionActual != null ) game.removeVisual(opcionAnterior)  }
 	method accionEnter() { game.sound("entrarOpcion.ogg") opcionActual.accion() }
-	method accionBackspace() { game.sound("entrarOpcion.ogg") menuPrincipal.opcionAnterior(null) menuPrincipal.opcionActual(opcionJugar) game.allVisuals().forEach({visual => game.removeVisual(visual)}) game.addVisual(menuPrincipal.opcionActual()) juego.estadoActual(menuPrincipal)  }
+	method accionBackspace() { game.sound("entrarOpcion.ogg") menuPrincipal.opcionAnterior(opcionReglas) menuPrincipal.opcionActual(opcionOpciones) game.allVisuals().forEach({visual => game.removeVisual(visual)}) game.addVisual(menuPrincipal.opcionActual()) juego.estadoActual(menuPrincipal)  }
 	
 }
 
