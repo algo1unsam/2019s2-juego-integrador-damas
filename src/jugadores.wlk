@@ -18,7 +18,8 @@ class Jugador{
 	
 	//JUGADOR INDICA QUE YA MOVIÓ
 	method yaMovi(){
-		//Finaliza el conteo del turno
+		//Finaliza el conteo del turno y vuelve a la variable tiempoDeTurno en 15
+		contador.tiempoDeTurno(15)
 		contador.terminaConteoDe("controlarTurno")
 		//Finaliza el turno
 		turnero.cambiaTurno(self)

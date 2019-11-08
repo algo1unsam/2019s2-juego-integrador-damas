@@ -24,7 +24,6 @@ program damas {
 	
 //	START
 	juego.estadoActual(menuPrincipal)
-	jugando.tablero(tablero)
 	opciones.opcionActual(opcionTableroClasico)
 	menuPrincipal.navegar()
 	game.start()

@@ -16,12 +16,18 @@ object juego {
 	method pausar() {
 		self.estadoActual(pausado)
 		pausado.activarse()
+		/*Si bien aquí ejecuta el metodo para finalizar los contadores, las variables de tiempo no se reinician con lo cual al volver de 
+		la pausa se iniciaran en el tiempo que qudaron*/ 
+		contador.terminaConteoDe("descontarUnSegundo")
+		contador.terminaConteoDe("controlarTurno")
 	}
 
 	method reanudarJuego() {
 		game.removeVisual(pausado)
 		self.estadoActual(jugando)
+		//Vuelve a iniciar los contadores
 		contador.iniciar()
+		contador.iniciarConteoTurno(turnero.turnoDe())
 	}
 
 	method volverMenu() {
@@ -45,8 +51,6 @@ object juego {
 }
 
 object jugando {
-
-	var property tablero
 
 	method image() = "fondoMadera.jpg"
 
@@ -94,30 +98,12 @@ object jugando {
 		var oscura11 = new FichaOscura(position = game.at(9, 5))
 		var oscura12 = new FichaOscura(position = game.at(11, 5))
 		jugador2.agregarFichas([ oscura1, oscura2, oscura3, oscura4, oscura5, oscura6, oscura7, oscura8, oscura9, oscura10, oscura11, oscura12 ])
-		game.addVisual(clara1)
-		game.addVisual(clara2)
-		game.addVisual(clara3)
-		game.addVisual(clara4)
-		game.addVisual(clara5)
-		game.addVisual(clara6)
-		game.addVisual(clara7)
-		game.addVisual(clara8)
-		game.addVisual(clara9)
-		game.addVisual(clara10)
-		game.addVisual(clara11)
-		game.addVisual(clara12)
-		game.addVisual(oscura1)
-		game.addVisual(oscura2)
-		game.addVisual(oscura3)
-		game.addVisual(oscura4)
-		game.addVisual(oscura5)
-		game.addVisual(oscura6)
-		game.addVisual(oscura7)
-		game.addVisual(oscura8)
-		game.addVisual(oscura9)
-		game.addVisual(oscura10)
-		game.addVisual(oscura11)
-		game.addVisual(oscura12)
+		
+		//Se visualizan las fichas de cada jugador
+		jugador1.misFichas().forEach{ficha=>game.addVisual(ficha)}
+		jugador2.misFichas().forEach{ficha=>game.addVisual(ficha)}
+		
+		//Se instancian y visualizan los marcadores de cada jugador
 		var claraDec = new Marcador(numero = 1)
 		var claraUni = new Marcador(numero = 2)
 		var oscuraDec = new Marcador(numero = 1)
@@ -295,7 +281,7 @@ object opcionTableroClasico {
 	method position() = game.at(0, 0)
 	
 	method accion(){
-		jugando.tablero(tablero)
+		tablero.posicionLista(0)
 		opciones.ultimaOpcion(self)
 		opciones.accionBackspace()
 	}
@@ -314,7 +300,7 @@ object opcionTableroArgento {
 	method position() = game.at(0, 0)
 	
 	method accion(){
-		jugando.tablero(tableroArgento)
+		tablero.posicionLista(1)
 		opciones.ultimaOpcion(self)
 		opciones.accionBackspace()
 	}
@@ -332,7 +318,7 @@ object opcionTableroWollok {
 	method position() = game.at(0, 0)
 	
 	method accion(){
-		jugando.tablero(tableroWollok)
+		tablero.posicionLista(2)
 		opciones.ultimaOpcion(self)
 		opciones.accionBackspace()
 	}
@@ -349,7 +335,7 @@ object opcionTableroMadera {
 	method position() = game.at(0, 0)
 	
 	method accion(){
-		jugando.tablero(tableroMadera)
+		tablero.posicionLista(3)
 		opciones.ultimaOpcion(self)
 		opciones.accionBackspace()
 	}

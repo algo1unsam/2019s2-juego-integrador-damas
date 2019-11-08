@@ -5,9 +5,13 @@ import jugadores.*
 object tablero {
 
 	var property position = game.at(4, 0)
+	//Lista de imagenes para el tablero
+	var imagenes=["tableroClasico.jpg","tableroArgento.jpeg","tableroWollok.jpeg","tableroMadera.jpg"]
+	//Variable para seleccionar que imagen de tablero va (se cambia en el menu principal) 
+	var property posicionLista=0
 
 	method image() {
-		return "tableroClasico.jpg"
+		return imagenes.get(posicionLista)
 	}
 	
 	method loQueHayEn(posicion){
@@ -21,21 +25,6 @@ object tablero {
 		game.removeVisual(ficha)
 	}
  
-}
-
-object tableroArgento {
-	method image() = "tableroArgento.jpeg"
-	method position() = game.at(4,0)
-}
-
-object tableroWollok {
-	method image() = "tableroWollok.jpeg"
-	method position() = game.at(4,0)
-}
-
-object tableroMadera {
-	method image() = "tableroMadera.jpg"
-	method position() = game.at(4,0)
 }
 
 object marcoSelector {
@@ -159,7 +148,7 @@ object contador{
 	var property estado=enBlanco
 	var imagenes = [ "contador.png", "contadorAlerta.png"]
 	//Atributo de tiempo límite por turno
-	var tiempoDeTurno=15
+	var property tiempoDeTurno=15
 	
 	method image() {
 		return imagenes.get(estado.devolvePosicion())
@@ -195,15 +184,13 @@ object contador{
 	
 	//Conteo para el turno del jugador (el tiempo lo determina el atributo tiempoturno)
 	method iniciarConteoTurno(jugador){
-		//Se carga el tiempo de turno en una variable interna para que la original no se modifique ya que se necesita en cada turno
-		var tiempoTurno=tiempoDeTurno
 		game.onTick(1000, "controlarTurno", { 
-			tiempoTurno-=1
-			if (tiempoTurno==0){
+			tiempoDeTurno-=1
+			if (tiempoDeTurno==0){
 				self.terminaConteoDe("controlarTurno")
+				tiempoDeTurno=15
 				marcoSelector.soltaFicha()
-				turnero.cambiaTurno(jugador)
-				
+				turnero.cambiaTurno(jugador)	
 			}
 		})
 	}
