@@ -5,7 +5,10 @@ import jugadores.*
 class Ficha {
 	var property position
 	var queDiagonal=null
+	//variable para que cambie de color cuando se selecciona la ficha
+	var property estado=enBlanco
 	//var _esReina = false
+	
 	
 	method diagonalDerecha(){
 		return game.at(position.x()+1,position.y()+self.haciaDonde())
@@ -18,9 +21,10 @@ class Ficha {
 	method validar(nuevaPosicion) {
 		if(self.puedoMoverme(nuevaPosicion)) {
 			self.movete(nuevaPosicion)			
-		}
-		if(self.puedoComer(nuevaPosicion)){
+		}else if(self.puedoComer(nuevaPosicion)){
 			self.come(nuevaPosicion, tablero.loQueHayEn(queDiagonal))
+		}else{
+			marcoSelector.error("Ese movimiento no es válido")
 		}
 	}
 	
@@ -86,13 +90,14 @@ class Ficha {
 }
 
 class FichaClara inherits Ficha {
+	var imagenes = [ "fichaClara.png", "fichaSeleccionada.png"]
 	
 	override method haciaDonde(){
 		return 1
 	} 
-	
-	override method image(){
-		return "fichaClara.png"
+
+	override method image() {
+		return imagenes.get(estado.devolvePosicion())
 	}
 	
 	override method pertenezcoA(){
@@ -102,13 +107,14 @@ class FichaClara inherits Ficha {
 }
 
 class FichaOscura inherits Ficha {
-	
+	var imagenes = [ "fichaOscura.png", "fichaSeleccionada.png"]
+		
 	override method haciaDonde(){
 		return -1
 	}
 	
-	override method image(){
-		return "fichaOscura.png"
+	override method image() {
+		return imagenes.get(estado.devolvePosicion())
 	}
 	
 	override method pertenezcoA(){

@@ -33,20 +33,33 @@ object marcoSelector {
 	var property fichaSeleccionada=null
 
 	method tomaFicha(posicion) {
+		if(fichaSeleccionada!=null){
+			fichaSeleccionada.estado(enBlanco)
+		}
 		game.colliders(self).forEach{ ficha =>
 			if (ficha != (self) and turnero.turnoDe().misFichas().contains(ficha)) {
 				fichaSeleccionada = ficha
+				fichaSeleccionada.estado(enRojo)	
 			}
 		}
 	}
 	//EL SELECTOR PRUEBA MOVER FICHA
 	method moveFicha(posicion) {
-		if (fichaSeleccionada != null) fichaSeleccionada.validar(posicion)
+		if (fichaSeleccionada != null){ 
+			fichaSeleccionada.validar(posicion)
+		}else{
+			self.error("No seleccionó una ficha para mover")
+		}
+		
 	}
 	
 	//EL SELECTOR SUELTA LA FICHA
 	method soltaFicha(){
-		fichaSeleccionada = null
+		//Esta condición se crea por si pasa el tiempo de turno y el jugador no seleccionó ficha, sino tiraría error 
+		if(fichaSeleccionada!=null){
+			fichaSeleccionada.estado(enBlanco)
+			fichaSeleccionada = null
+		}
 	}
 	
 	//MUEVE EL MARCO SELECTOR
