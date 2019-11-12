@@ -6,8 +6,8 @@ import menuPrincipal.*
 object tablero {
 
 	var property position = game.at(4, 0)
-	//Lista de imagenes para el tablero
 	var imagenes=["tableroClasico.jpg","tableroArgento.jpeg","tableroWollok.jpeg","tableroMadera.jpg"]
+	
 	//Variable para seleccionar que imagen de tablero va (se cambia en el menu principal) 
 	var property posicionLista=0
 		
@@ -26,7 +26,7 @@ object tablero {
 	
 	method loQueHayEn(posicion){
 		if(game.getObjectsIn(posicion)!=[])
-			return game.getObjectsIn(posicion)
+			return game.getObjectsIn(posicion).uniqueElement()
 		else
 			return null			
 	}
@@ -34,7 +34,8 @@ object tablero {
 	method quitarFicha(ficha){
 		game.removeVisual(ficha)
 	}
-
+	
+	
 	method derechaArriba(){
 		if(x<topeDer and y<topeSup){
 			x += 1
@@ -88,7 +89,10 @@ object tablero {
 		x = marcoSelector.fichaSeleccionada().position().x()
 		y = marcoSelector.fichaSeleccionada().position().y()
 	}
-		
+	
+	//SE INVOCA DE FORMA RECURSIVA CON LOS METODOS:
+	//derechaArriba(), derechaAbajo(), izquierdaArriba(), izquierdaAbajo()
+	//HASTA QUE SE LLEGAN A LOS LÍMITES DEL TABLERO	
 	method invocador(indice){
 		if(indice == 0)
 			self.derechaArriba()
@@ -153,17 +157,17 @@ object marcoSelector {
 	//MUEVE EL MARCO SELECTOR
 	method movete(nuevaPosicion) {
 		position = nuevaPosicion
-		if (position.x() > 11) {
-			position = game.at(11, position.y())
+		if (position.x() > tablero.topeDer()) {
+			position = game.at(tablero.topeDer(), position.y())
 		}
-		if (position.x() < 4) {
-			position = game.at(4, position.y())
+		if (position.x() < tablero.topeIzq()) {
+			position = game.at(tablero.topeIzq(), position.y())
 		}
-		if (position.y() > 7) {
-			position = game.at(position.x(), 7)
+		if (position.y() > tablero.topeSup()) {
+			position = game.at(position.x(), tablero.topeSup())
 		}
-		if (position.y() < 0) {
-			position = game.at(position.x(), 0)
+		if (position.y() < tablero.topeInf()) {
+			position = game.at(position.x(), tablero.topeInf())
 		}
 	}
 
@@ -179,7 +183,7 @@ object marcoSelector {
 		return position.x() - fichaSeleccionada.position().x() > 0
 	}
 	
-	//PARA EL CASO DE LA REINA
+	
 	method masArribaQueFichaSeleccionada(){
 		return position.y() - fichaSeleccionada.position().y() > 0
 	}

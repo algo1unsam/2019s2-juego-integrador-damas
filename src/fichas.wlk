@@ -3,16 +3,13 @@ import tablero.*
 import jugadores.*
 
 class Ficha {
-	var property position
-	var property queDiagonal=null
-	//variable para que cambie de color cuando se selecciona la ficha
-	var property estado=enBlanco
-	//Variable que marca si ya comió alguna ficha
-	var property comerEnCadena=false
-		
-	//VARIABLES PARA LA REINA
-	var tipo = damaComun
 	
+	var property position
+	var tipo = damaComun
+	var property estado=enBlanco
+	var property comerEnCadena=false
+	var property queDiagonal=null	
+		
 	//VARIABLES PARA LA REINA: CADA LISTA CONTIENE LAS COORDENADAS 
 	//RESPECTO DE LA POSICION REINA
 	var property diagArribaDerecha = []
@@ -22,22 +19,7 @@ class Ficha {
 
 		 	
 	method validar(nuevaPosicion) {
-		//verifica si puede hacer un movimiento siemple, el not comerEnCadena es para evitar que luego de comer haga un movimiento simple
-		if(self.puedoMoverme(nuevaPosicion) and not comerEnCadena) {
-			self.movete(nuevaPosicion)
-			self.terminarMovimiento()
-		//Verifica si puede comer y que la posicion a la que se mueva sea +-2 horizontales y +o-verticales	
-		}else if(self.puedoComer(position) and (nuevaPosicion.x()-position.x()).abs()==2 and (nuevaPosicion.y()-position.y()).abs()==2){
-			self.enDondetengoParaComer()
-			//define de que lado puede comer y tira erro si pudiendo comer de un lado trata de mover al otro 
-			if((self.esPosibleComerDerecha(position) and queDiagonal==self.diagonalDerecha())or(self.esPosibleComerIzquierda(position) and queDiagonal==self.diagonalIzquierda())){
-				self.come(nuevaPosicion, tablero.loQueHayEn(queDiagonal))
-			}else{
-				marcoSelector.error("Ese movimiento no es válido")
-			}
-		}else{
-			marcoSelector.error("Ese movimiento no es válido")
-		}
+		tipo.validar(nuevaPosicion, self)
 	}
 	
 	//Define de que lado tiene para comer
@@ -51,8 +33,7 @@ class Ficha {
 	
 	//COME FICHA CONTRINCANTE Y LUEGO SE MUEVE
 	method come(nuevaPosicion, ficha){
-		ficha.forEach{e=>tablero.quitarFicha(e)} //QUITA EL ELEMENTO VISUAL
-		ficha.forEach{e=>turnero.contrincante().quitarFicha(e)}
+		tipo.come(nuevaPosicion, ficha)
 		self.movete(nuevaPosicion)
 		comerEnCadena=true
 	}
@@ -73,44 +54,9 @@ class Ficha {
 	
 	//SE VALIDA SI LA FICHA PUEDE COMER 
 	method puedoComer(posicion){
-		return	tipo.puedoComer(posicion, self)				
+		return tipo.puedoComer(posicion, self)				
 	}
-	
-	method superaLoslimtes(posicion){
-		return posicion.x()>tablero.topeDer() 
-				or posicion.x()<tablero.topeIzq() 
-				or posicion.y()>tablero.topeSup() 
-				or posicion.y()<tablero.topeInf()
-	}
-	
-	//Metodo para verificar si puede comer a la derecha
-	method esPosibleComerDerecha(posicion){
-	 
-	  		return(
-	 			turnero.contrincante().misFichas().any{ficha=>ficha.position()==self.diagonalDerecha()}
-	 			and
-	  			turnero.contrincante().misFichas().all{ficha=>ficha.position()!=game.at(posicion.x()+2,posicion.y()+self.haciaDonde()*2)}
-	  			and
-	 			self.pertenezcoA().misFichas().all{ficha=>ficha.position()!=game.at(posicion.x()+2,posicion.y()+self.haciaDonde()*2)}
-	 			and not
-	 			self.superaLoslimtes(game.at(posicion.x()+2,posicion.y()+self.haciaDonde()*2))
-	 		)
-	 }
-	 
-	 //Metodo para verificar si puede comer a la izquierda
-	 method esPosibleComerIzquierda(posicion){
-	 
-	  		return(
-	 			turnero.contrincante().misFichas().any{ficha=>ficha.position()==self.diagonalIzquierda()}
-	 			and
-	  			turnero.contrincante().misFichas().all{ficha=>ficha.position()!=game.at(posicion.x()-2,posicion.y()+self.haciaDonde()*2)}
-	  			and
-	 			self.pertenezcoA().misFichas().all{ficha=>ficha.position()!=game.at(posicion.x()-2,posicion.y()+self.haciaDonde()*2)}
-		 		and not
-	 			self.superaLoslimtes(game.at(posicion.x()-2,posicion.y()+self.haciaDonde()*2)) 			
-	 		)
-	 }
-	 
+			 
 	//SE MUEVE UNA POSICIÓN QUE LE LLEGA DEL MARCO SELECTOR
 	method movete(nuevaPosicion){
 		
@@ -131,7 +77,14 @@ class Ficha {
 			self.pertenezcoA().yaMovi()
 			self.comerEnCadena(false)			
 	}
-
+	
+	method superaLoslimtes(posicion){
+		return posicion.x()>tablero.topeDer() 
+				or posicion.x()<tablero.topeIzq() 
+				or posicion.y()>tablero.topeSup() 
+				or posicion.y()<tablero.topeInf()
+	}
+	
 	//METODOS SOBREESCRITOS EN CLASES HIJAS
 	method haciaDonde()
 	method image()
@@ -145,8 +98,7 @@ class FichaClara inherits Ficha {
 	override method haciaDonde(){
 		return 1
 	}
-	 
-
+	
 	override method image() {
 		return imagenes.get(estado.devolvePosicion())
 	}
@@ -183,8 +135,38 @@ class FichaOscura inherits Ficha {
 
 object damaComun{
 	
-	method puedoComer(posicion, ficha){
-		return ficha.esPosibleComerDerecha(posicion) or ficha.esPosibleComerIzquierda(posicion)
+	method validar(nuevaPosicion, fichaEnUso){
+		//verifica si puede hacer un movimiento siemple, el not comerEnCadena 
+		//es para evitar que luego de comer haga un movimiento simple
+		if(fichaEnUso.puedoMoverme(nuevaPosicion) and not fichaEnUso.comerEnCadena()) {
+			fichaEnUso.movete(nuevaPosicion)
+			fichaEnUso.terminarMovimiento()
+		//Verifica si puede comer y que la posicion a la que se mueva 
+		//sea +-2 horizontales y +o-verticales	
+		}else 
+			if(fichaEnUso.puedoComer(fichaEnUso.position()) and (nuevaPosicion.x()-fichaEnUso.position().x()).abs()==2 and (nuevaPosicion.y()-fichaEnUso.position().y()).abs()==2){
+				fichaEnUso.enDondetengoParaComer()
+				//define de que lado puede comer y tira erro si 
+				//pudiendo comer de un lado trata de mover al otro 
+				if((self.esPosibleComerDerecha(fichaEnUso.position(),fichaEnUso) and fichaEnUso.queDiagonal()==fichaEnUso.diagonalDerecha())
+				or(self.esPosibleComerIzquierda(fichaEnUso.position(),fichaEnUso) and fichaEnUso.queDiagonal()==fichaEnUso.diagonalIzquierda())
+			){
+				fichaEnUso.come(nuevaPosicion, tablero.loQueHayEn(fichaEnUso.queDiagonal()))
+			}else{
+				marcoSelector.error("Ese movimiento no es válido")
+			}
+		}else{
+			marcoSelector.error("Ese movimiento no es válido")
+		}
+	}
+	
+	method puedoComer(posicion, fichaEnUso){
+		return self.esPosibleComerDerecha(posicion,fichaEnUso) or self.esPosibleComerIzquierda(posicion,fichaEnUso)
+	}
+	
+	method come(nuevaPosicion, ficha){
+		tablero.quitarFicha(ficha)
+		turnero.contrincante().quitarFicha(ficha)
 	}
 	
 	method puedoMoverme(posicion, ficha){
@@ -194,6 +176,34 @@ object damaComun{
 	method movete(destino, ficha){
 		ficha.position(destino)
 	}
+	
+	
+	method esPosibleComerDerecha(posicion, fichaEnUso){
+	 
+	  		return(
+	 			turnero.contrincante().misFichas().any{ficha=>ficha.position()==fichaEnUso.diagonalDerecha()}
+	 			and
+	  			turnero.contrincante().misFichas().all{ficha=>ficha.position()!=game.at(posicion.x()+2,posicion.y()+fichaEnUso.haciaDonde()*2)}
+	  			and
+	 			fichaEnUso.pertenezcoA().misFichas().all{ficha=>ficha.position()!=game.at(posicion.x()+2,posicion.y()+fichaEnUso.haciaDonde()*2)}
+	 			and not
+	 			fichaEnUso.superaLoslimtes(game.at(posicion.x()+2,posicion.y()+fichaEnUso.haciaDonde()*2))
+	 		)
+	 }
+	 
+	 //Metodo para verificar si puede comer a la izquierda
+	 method esPosibleComerIzquierda(posicion, fichaEnUso){
+	 
+	  		return(
+	 			turnero.contrincante().misFichas().any{ficha=>ficha.position()==fichaEnUso.diagonalIzquierda()}
+	 			and
+	  			turnero.contrincante().misFichas().all{ficha=>ficha.position()!=game.at(posicion.x()-2,posicion.y()+fichaEnUso.haciaDonde()*2)}
+	  			and
+	 			fichaEnUso.pertenezcoA().misFichas().all{ficha=>ficha.position()!=game.at(posicion.x()-2,posicion.y()+fichaEnUso.haciaDonde()*2)}
+		 		and not
+	 			fichaEnUso.superaLoslimtes(game.at(posicion.x()-2,posicion.y()+fichaEnUso.haciaDonde()*2)) 			
+	 		)
+	 }
 			
 }
 
@@ -201,9 +211,25 @@ object damaReina{
 	
 	const property imagen = ""
 	
+	method validar(nuevaPosicion, fichaEnUso){
+		
+		if(fichaEnUso.puedoMoverme(nuevaPosicion) and not fichaEnUso.comerEnCadena()) {
+			fichaEnUso.movete(nuevaPosicion)
+			fichaEnUso.terminarMovimiento()
+		}
+		if(fichaEnUso.puedoComer(nuevaPosicion)){
+			
+		}
+	}
+		
 	method puedoComer(posicion, ficha){
 		return marcoSelector.estaVacio() and self.hayParaComer(posicion, ficha)
 	}
+	
+//	method come(posicion, ficha){
+//		tablero.quitarFicha(ficha)
+//		turnero.contrincante().quitarFicha(ficha)
+//	}
 	
 	method puedoMoverme(destino, ficha){
 		//1) ESTA VACÍA LA POSICION DESTINO
