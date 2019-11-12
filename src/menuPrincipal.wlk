@@ -48,6 +48,7 @@ object juego {
 	}
 	
 	method finalizar(){
+		contador.terminaConteoDe("descontarUnSegundo")
 		game.allVisuals().forEach{ visuales => game.removeVisual(visuales)}
 		game.addVisual(finalizado)
 		self.estadoActual(finalizado)
