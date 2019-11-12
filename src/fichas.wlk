@@ -228,7 +228,7 @@ object damaReina{
 	method validar(nuevaPosicion, fichaEnUso){
 		
 		if(fichaEnUso.puedoMoverme(nuevaPosicion) and not fichaEnUso.comerEnCadena()) {
-			console.println("dentro del if de movimiento")
+			
 			fichaEnUso.movete(nuevaPosicion)
 			fichaEnUso.terminarMovimiento()
 		}else{
