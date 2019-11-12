@@ -145,7 +145,7 @@ class Ficha {
 }
 
 class FichaClara inherits Ficha {
-	var imagenes = ["fichaClara.png", "fichaSeleccionada.png"]
+	var imagenes = ["fichaClara.png", "fichaSeleccionadaClara.png"]
 	
 	override method haciaDonde(){
 		return 1
