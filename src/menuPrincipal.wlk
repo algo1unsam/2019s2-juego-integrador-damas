@@ -8,15 +8,15 @@ object juego {
 	var property estadoActual
 	var property ganador
 	
-	method comenzar() {
+	method comenzarPartida() {
 		game.allVisuals().forEach{ visuales => game.removeVisual(visuales)}
 		self.estadoActual(jugando)
 		jugando.activarse()
 	}
 
 	method pausar() {
-		self.estadoActual(pausado)
-		pausado.activarse()
+		self.estadoActual(enPausa)
+		game.addVisual(enPausa)
 		/*Si bien aquí ejecuta el metodo para finalizar los contadores, las variables de tiempo no se reinician con lo cual al volver de 
 		la pausa se iniciaran en el tiempo que qudaron*/ 
 		contador.terminaConteoDe("descontarUnSegundo")
@@ -24,7 +24,7 @@ object juego {
 	}
 
 	method reanudarJuego() {
-		game.removeVisual(pausado)
+		game.removeVisual(enPausa)
 		self.estadoActual(jugando)
 		//Vuelve a iniciar los contadores
 		contador.iniciar()
@@ -32,49 +32,77 @@ object juego {
 	}
 
 	method volverMenu() {
+		//Se reinician todos los valores de tiempo, fichas y posiciones
+		jugador1.misFichas().forEach{ ficha => jugador1.quitarFicha(ficha) }
+		jugador2.misFichas().forEach{ ficha => jugador2.quitarFicha(ficha) }
+		turnero.jugadorEnTurno(jugador1)
+		jugador1.estado(enRojo)
+		jugador2.estado(enBlanco)
+		contador.tiempo(600)
+		marcoSelector.position(game.at(4,2))
+		contador.tiempoDeTurno(15)
+		//Se activa el menu
 		self.estadoActual(menuPrincipal)
 		game.allVisuals().forEach{ visuales => game.removeVisual(visuales)}
-		menuPrincipal.navegar()
+		game.addVisual(menuPrincipal.opcionActual())
 	}
 	
 	method finalizar(){
 		game.allVisuals().forEach{ visuales => game.removeVisual(visuales)}
+		game.addVisual(finalizado)
 		self.estadoActual(finalizado)
 		self.estadoActual().activarse()
 	}
 
-	method opciones() {
-		game.removeVisual(opcionOpciones)
-		opciones.navegar()
-		self.estadoActual(opciones)
+	method verTableros() {
+		game.removeVisual(opcionTableros)
+		game.addVisual(menuTableros.opcionActual())
+		self.estadoActual(menuTableros)
 	}
 
-	method reglas() {
+	method verReglas() {
 		game.removeVisual(opcionReglas)
-		game.addVisual(reglas)
-		self.estadoActual(reglas)
+		game.addVisual(reglasPrimerPagina)
+		self.estadoActual(reglasPrimerPagina)
 	}
 
 }
 
-object jugando {
-
-	method image() = "fondoMadera.jpg"
-
-	method position() = game.at(0, 0)
+class EstadoDelJuego {
 	
-	method accionS() { marcoSelector.tomaFicha(marcoSelector.position()) }
-	method accionM() { marcoSelector.moveFicha(marcoSelector.position()) }
-	method accionP() { juego.pausar() }
-	method accionIzq() { marcoSelector.movete(marcoSelector.position().left(1)) }
-	method accionDer() { marcoSelector.movete(marcoSelector.position().right(1)) }
-	method accionUp() { marcoSelector.movete(marcoSelector.position().up(1)) }
-	method accionDown(){ marcoSelector.movete(marcoSelector.position().down(1)) }
+	var property image
+	var property position
+	
+	//Acciones al presionar teclas 
+	method accionS() {}
+	method accionM() {}
+	method accionP() {}
+	method accionIzq() {}
+	method accionDer() {}
+	method accionUp() {}
+	method accionDown() {}
 	method accionEnter() {}
 	method accionBackspace() {}
-	
+	//Accion al activar el modo
+	method activarse() {}
+}
 
-	method activarse() {
+// Objetos relacionados con los distintos estados del juego
+
+object jugando inherits EstadoDelJuego {
+
+	override method image() = "fondoMadera.jpg"
+	override method position() = game.at(0, 0)
+	
+	override method accionS() { marcoSelector.tomaFicha(marcoSelector.position()) }
+	override method accionM() { marcoSelector.moveFicha(marcoSelector.position()) }
+	override method accionP() { juego.pausar() }
+	override method accionIzq() { marcoSelector.movete(marcoSelector.position().left(1)) }
+	override method accionDer() { marcoSelector.movete(marcoSelector.position().right(1)) }
+	override method accionUp() { marcoSelector.movete(marcoSelector.position().up(1)) }
+	override method accionDown(){ marcoSelector.movete(marcoSelector.position().down(1)) }
+
+	override method activarse() {
 		
 		// EMPIEZA EL JUEGO
 		game.addVisual(self)
@@ -129,7 +157,7 @@ object jugando {
 		
 		// Instancia y visualiza todo lo referido al contador
 		game.addVisual(contador)
-		var minDec = new Marcador(numero = 0)
+		var minDec = new Marcador(numero = 1)
 		var minUni = new Marcador(numero = 0)
 		var segDec = new Marcador(numero = 0)
 		var segUni = new Marcador(numero = 0)
@@ -145,77 +173,138 @@ object jugando {
 		// inicia el conteo general y el primer conteo de turno
 		contador.iniciar()
 		contador.iniciarConteoTurno(jugador1)
-	
 	}
 
 }
 
-object pausado {
-
-	method image() = "juegoPausa.png"
-
-	method position() = game.at(0, 0)
-
-	method activarse() {
-		game.addVisual(self)
-	}
-	
-	method accionS() {}
-	method accionM() {}
-	method accionP() {}
-	method accionIzq() {}
-	method accionDer() {}
-	method accionUp() {}
-	method accionDown() {}
-	method accionEnter() { juego.reanudarJuego() }
-	method accionBackspace() { juego.volverMenu() }
-
-}
-
-object finalizado {
-
-	method image() = return juego.ganador().imagenGanadora()
-
-	method position() = game.at(0, 0)
-
-	method activarse() {
-		
-		game.addVisual(self)
-	}
-	
-	method accionS() {}
-	method accionM() {}
-	method accionP() {}
-	method accionIzq() {}
-	method accionDer() {}
-	method accionUp() {}
-	method accionDown() {}
-	method accionEnter() { }
-	method accionBackspace() { game.stop() }
-
-}
-
-object menuPrincipal {
+object menuPrincipal inherits EstadoDelJuego {
 
 	var property opcionAnterior = null
 	var property opcionActual = opcionJugar
 	
-
-	method navegar() {
+	override method accionUp() {
+		game.sound("menuSonido.ogg")
+		opcionAnterior = opcionActual
+		opcionActual = opcionActual.opcionDeArriba()
 		game.addVisual(opcionActual)
+		if (opcionActual != null) game.removeVisual(opcionAnterior)
 	}
 
-	method accionS() {}
-	method accionM() {}
-	method accionP() {}
-	method accionIzq() {}
-	method accionDer() {}
-	method accionUp() { game.sound("menuSonido.ogg") opcionAnterior = opcionActual  opcionActual = opcionActual.opcionDeArriba() game.addVisual(opcionActual) if ( opcionActual != null ) game.removeVisual(opcionAnterior)  }
-	method accionDown() { game.sound("menuSonido.ogg") opcionAnterior = opcionActual  opcionActual = opcionActual.opcionDeAbajo() game.addVisual(opcionActual) if ( opcionActual != null ) game.removeVisual(opcionAnterior)  }
-	method accionEnter() { if (not opcionActual.equals(opcionSalir)) { game.sound("entrarOpcion.ogg") } opcionActual.accion() }
-	method accionBackspace() {}
+	override method accionDown() {
+		game.sound("menuSonido.ogg")
+		opcionAnterior = opcionActual
+		opcionActual = opcionActual.opcionDeAbajo()
+		game.addVisual(opcionActual)
+		if (opcionActual != null) game.removeVisual(opcionAnterior)
+	}
+
+	override method accionEnter() {
+		if (not opcionActual.equals(opcionSalir)) {
+			game.sound("entrarOpcion.ogg")
+		}
+		opcionActual.accion()
+	}
+	
+}
+
+object enPausa inherits EstadoDelJuego {
+
+	override method image() = "juegoPausa.png"
+	override method position() = game.at(0, 0)
+	override method accionEnter() { juego.reanudarJuego() }
+	override method accionBackspace() { juego.volverMenu() }
 
 }
+
+object finalizado inherits EstadoDelJuego {
+
+	override method image() = return juego.ganador().imagenGanadora()
+
+	override method position() = game.at(0, 0)
+	
+	override method accionBackspace() { game.stop() }
+	override method accionEnter() { juego.volverMenu() }
+}
+
+
+
+object reglasPrimerPagina inherits EstadoDelJuego {
+
+	override method image() = "Reglas.jpg"
+	override method position() = game.at(0, 0)
+	
+	override method accionDer() {
+		game.sound("menuSonido.ogg")
+		game.removeVisual(self)
+		game.addVisual(reglasSegundaPagina)
+		juego.estadoActual(reglasSegundaPagina)
+	}
+
+	override method accionBackspace() {
+		game.sound("entrarOpcion.ogg")
+		menuPrincipal.opcionAnterior(opcionJugar)
+		menuPrincipal.opcionActual(opcionReglas)
+		game.allVisuals().forEach({ visual => game.removeVisual(visual)})
+		game.addVisual(menuPrincipal.opcionActual())
+		juego.estadoActual(menuPrincipal)
+	}
+
+}
+
+object reglasSegundaPagina inherits EstadoDelJuego {
+	
+	override method image() = "comoJugar.jpg"
+	override method position() = game.at(0, 0)
+	
+	override method accionIzq() {
+		game.sound("menuSonido.ogg")
+		game.removeVisual(self)
+		game.addVisual(reglasPrimerPagina)
+		juego.estadoActual(reglasPrimerPagina)
+	}
+
+}
+
+object menuTableros inherits EstadoDelJuego { 
+	
+	var opcionAnterior = null
+	var property ultimaOpcion
+	var property opcionActual = ultimaOpcion
+	var property seleccionado
+	
+	override method accionUp() {
+		game.sound("menuSonido.ogg")
+		opcionAnterior = opcionActual
+		opcionActual = opcionActual.opcionDeArriba()
+		game.addVisual(opcionActual)
+		if (opcionActual != null) game.removeVisual(opcionAnterior)
+	}
+
+	override method accionDown() {
+		game.sound("menuSonido.ogg")
+		opcionAnterior = opcionActual
+		opcionActual = opcionActual.opcionDeAbajo()
+		game.addVisual(opcionActual)
+		if (opcionActual != null) game.removeVisual(opcionAnterior)
+	}
+
+	override method accionEnter() {
+		game.sound("entrarOpcion.ogg")
+		opcionActual.accion()
+	}
+
+	override method accionBackspace() {
+		game.sound("entrarOpcion.ogg")
+		menuPrincipal.opcionAnterior(opcionReglas)
+		menuPrincipal.opcionActual(opcionTableros)
+		game.allVisuals().forEach({ visual => game.removeVisual(visual)})
+		game.addVisual(menuPrincipal.opcionActual())
+		juego.estadoActual(menuPrincipal)
+	}
+	
+}
+
+// Objetos relacionados con las opciones del menu principal y el menu de tableros
 
 object opcionJugar {
 
@@ -226,46 +315,25 @@ object opcionJugar {
 
 	method position() = game.at(0, 0)
 
-	method accion() {
-		juego.comenzar()
-	}
+	method accion() { juego.comenzarPartida() }
 
 }
 
 object opcionReglas {
 
 	var property opcionDeArriba = opcionJugar
-	var property opcionDeAbajo = opcionOpciones
+	var property opcionDeAbajo = opcionTableros
 
 	method image() = "menuPrincipalReglas.jpg"
 
 	method position() = game.at(0, 0)
 
-	method accion() {
-		juego.reglas()
-	}
-
+	method accion() { juego.verReglas() }
+		
 }
 
-object reglas {
 
-	method image() = "Reglas.jpg"
-
-	method position() = game.at(0, 0)
-	
-	method accionS() {}
-	method accionM() {}
-	method accionP() {}
-	method accionIzq() {}
-	method accionDer() {}
-	method accionUp() {}
-	method accionDown() {}
-	method accionEnter() {}
-	method accionBackspace() { game.sound("entrarOpcion.ogg") menuPrincipal.opcionAnterior(opcionJugar) menuPrincipal.opcionActual(opcionReglas) game.allVisuals().forEach({visual => game.removeVisual(visual)}) game.addVisual(menuPrincipal.opcionActual()) juego.estadoActual(menuPrincipal)  }
-
-}
-
-object opcionOpciones {
+object opcionTableros {
 
 	var property opcionDeArriba = opcionReglas
 	var property opcionDeAbajo = opcionSalir
@@ -275,31 +343,26 @@ object opcionOpciones {
 	method position() = game.at(0, 0)
 
 	method accion() {
-		juego.opciones()
+		juego.verTableros()
 	}
 
 }
 
-object opciones { 
-	
-	var opcionAnterior = null
-	var property ultimaOpcion
-	var property opcionActual = ultimaOpcion
-	var property seleccionado
-	
-	method navegar(){ game.addVisual(opcionActual) }
-	
-	method accionS() {}
-	method accionM() {}
-	method accionP() {}
-	method accionIzq() {}
-	method accionDer() {}
-	method accionUp() { game.sound("menuSonido.ogg") opcionAnterior = opcionActual  opcionActual = opcionActual.opcionDeArriba() game.addVisual(opcionActual) if ( opcionActual != null ) game.removeVisual(opcionAnterior)  }
-	method accionDown() { game.sound("menuSonido.ogg") opcionAnterior = opcionActual  opcionActual = opcionActual.opcionDeAbajo() game.addVisual(opcionActual) if ( opcionActual != null ) game.removeVisual(opcionAnterior)  }
-	method accionEnter() { game.sound("entrarOpcion.ogg") opcionActual.accion() }
-	method accionBackspace() { game.sound("entrarOpcion.ogg") menuPrincipal.opcionAnterior(opcionReglas) menuPrincipal.opcionActual(opcionOpciones) game.allVisuals().forEach({visual => game.removeVisual(visual)}) game.addVisual(menuPrincipal.opcionActual()) juego.estadoActual(menuPrincipal)  }
-	
+object opcionSalir {
+
+	var property opcionDeArriba = opcionTableros
+	var property opcionDeAbajo = opcionJugar
+
+	method image() = "menuPrincipalSalir.jpg"
+
+	method position() = game.at(0, 0)
+
+	method accion() {
+		game.stop()
+	}
+
 }
+
 
 object opcionTableroClasico {
 
@@ -312,8 +375,8 @@ object opcionTableroClasico {
 	
 	method accion(){
 		tablero.posicionLista(0)
-		opciones.ultimaOpcion(self)
-		opciones.accionBackspace()
+		menuTableros.ultimaOpcion(self)
+		menuTableros.accionBackspace()
 	}
 
 }
@@ -331,8 +394,8 @@ object opcionTableroArgento {
 	
 	method accion(){
 		tablero.posicionLista(1)
-		opciones.ultimaOpcion(self)
-		opciones.accionBackspace()
+		menuTableros.ultimaOpcion(self)
+		menuTableros.accionBackspace()
 	}
 
 }
@@ -349,8 +412,8 @@ object opcionTableroWollok {
 	
 	method accion(){
 		tablero.posicionLista(2)
-		opciones.ultimaOpcion(self)
-		opciones.accionBackspace()
+		menuTableros.ultimaOpcion(self)
+		menuTableros.accionBackspace()
 	}
 
 }
@@ -366,25 +429,9 @@ object opcionTableroMadera {
 	
 	method accion(){
 		tablero.posicionLista(3)
-		opciones.ultimaOpcion(self)
-		opciones.accionBackspace()
+		menuTableros.ultimaOpcion(self)
+		menuTableros.accionBackspace()
 	}
 
 }
 
-
-
-object opcionSalir {
-
-	var property opcionDeArriba = opcionOpciones
-	var property opcionDeAbajo = opcionJugar
-
-	method image() = "menuPrincipalSalir.jpg"
-
-	method position() = game.at(0, 0)
-
-	method accion() {
-		game.stop()
-	}
-
-}

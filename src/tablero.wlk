@@ -176,7 +176,7 @@ object marcoSelector {
 
 object turnero {
 
-	var jugadorEnTurno = jugador1
+	var property jugadorEnTurno = jugador1
 	const jugadores = [jugador1,jugador2]	
 	
 	method turnoDe() {
