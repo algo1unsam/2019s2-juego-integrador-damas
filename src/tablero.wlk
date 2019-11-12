@@ -304,9 +304,13 @@ object contador{
 			tiempoDeTurno-=1
 			if (tiempoDeTurno==0){
 				self.terminaConteoDe("controlarTurno")
-				tiempoDeTurno=15
-				marcoSelector.soltaFicha()
-				turnero.cambiaTurno(jugador)	
+				
+				if(marcoSelector.fichaSeleccionada()!=null){
+					marcoSelector.fichaSeleccionada().comerEnCadena(false)
+					marcoSelector.soltaFicha()
+				}
+				tiempoDeTurno=15	
+				turnero.cambiaTurno(jugador)
 			}
 		})
 	}

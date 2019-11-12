@@ -63,8 +63,8 @@ class Ficha {
 	}
 	
 	method transformarAReina(){
-		//CAMBIAR SU IMAGEN
 		tipo = damaReina
+		self.image()
 	}
 		
 	//FICHA LE INDICA A SELECTOR QUE LA SUELTE Y JUGADOR DICE QUE YA MOVIÓ
@@ -90,13 +90,18 @@ class Ficha {
 
 class FichaClara inherits Ficha {
 	var imagenes = ["fichaClara.png", "fichaClaraSeleccionada.png"]
+	var imagenesReina = ["reinaClara.png", "reinaSeleccionadaClara.png"]
 	
 	override method haciaDonde(){
 		return 1
 	}
 	
 	override method image() {
-		return imagenes.get(estado.devolvePosicion())
+		if(tipo.equals(damaComun)){
+			return imagenes.get(estado.devolvePosicion())
+		}else{
+			return imagenesReina.get(estado.devolvePosicion())
+		}
 	}
 	
 	override method pertenezcoA(){
@@ -111,13 +116,18 @@ class FichaClara inherits Ficha {
 
 class FichaOscura inherits Ficha {
 	var imagenes = ["fichaOscura.png", "fichaSeleccionada.png"]
+	var imagenesReina = ["reinaOscura.png", "reinaSeleccionada.png"]
 		
 	override method haciaDonde(){
 		return -1
 	}
 	
 	override method image() {
-		return imagenes.get(estado.devolvePosicion())
+		if(tipo.equals(damaComun)){
+			return imagenes.get(estado.devolvePosicion())
+		}else{
+			return imagenesReina.get(estado.devolvePosicion())
+		}
 	}
 	
 	override method pertenezcoA(){
@@ -218,12 +228,16 @@ object damaReina{
 	method validar(nuevaPosicion, fichaEnUso){
 		
 		if(fichaEnUso.puedoMoverme(nuevaPosicion) and not fichaEnUso.comerEnCadena()) {
+			console.println("dentro del if de movimiento")
 			fichaEnUso.movete(nuevaPosicion)
 			fichaEnUso.terminarMovimiento()
 		}else{
 				if(self.puedoComer(nuevaPosicion, fichaEnUso)){
-					self.come(nuevaPosicion, self.diagonal(nuevaPosicion, fichaEnUso).uniqueElement())
-				}else{
+					self.come(nuevaPosicion, self.retornarElemento(nuevaPosicion, fichaEnUso))
+					fichaEnUso.movete(nuevaPosicion)
+					fichaEnUso.comerEnCadena(true)
+				}
+				else{
 					fichaEnUso.error("No podes comer esa ficha")
 				}
 		}
@@ -254,46 +268,48 @@ object damaReina{
 	}
 	
 	//RETORNA LOS ELEMENTOS DE LA DIAGONAL ENTRE LA FICHA Y EL DESTINO
-	method diagonal(destino, ficha){
+	method diagonal(destino, fichaEnUso){
 		
 		if(marcoSelector.masDerechaQueFichaSeleccionada()){
 			//A LA DERECHA
 			if(marcoSelector.masArribaQueFichaSeleccionada()){
 				//ARRIBA
-				return ficha.diagArribaDerecha().filter{c=>c.y()<destino.y()}.map{c=>game.getObjectsIn(c)}
+				return fichaEnUso.diagArribaDerecha().filter{c=>c.y()<destino.y()}.map{c=>game.getObjectsIn(c)}
 			}else{
 				//ABAJO
-				return ficha.diagAbajoDerecha().filter{c=>c.y()>destino.y()}.map{c=>game.getObjectsIn(c)}	
+				return fichaEnUso.diagAbajoDerecha().filter{c=>c.y()>destino.y()}.map{c=>game.getObjectsIn(c)}	
 			}
 		}else{
 			//A LA IZQUIERDA
 			if(marcoSelector.masArribaQueFichaSeleccionada()){
 				//ARRIBA
-				return ficha.diagArribaIzquierda().filter{c=>c.y()<destino.y()}.map{c=>game.getObjectsIn(c)}	
+				return fichaEnUso.diagArribaIzquierda().filter{c=>c.y()<destino.y()}.map{c=>game.getObjectsIn(c)}	
 			}else{
 				//ABAJO
-				return ficha.diagAbajoIzquierda().filter{c=>c.y()>destino.y()}.map{c=>game.getObjectsIn(c)}	
+				return fichaEnUso.diagAbajoIzquierda().filter{c=>c.y()>destino.y()}.map{c=>game.getObjectsIn(c)}	
 			}
 		}
 	}
 	
-	method estaVacio(destino, ficha){
-		return self.diagonal(destino, ficha).flatten().isEmpty()
+	method estaVacio(destino, fichaEnUso){
+		return self.diagonal(destino, fichaEnUso).flatten().isEmpty()
 	}
 	
 	method hayParaComer(destino, fichaEnUso){
-		//da error
-		return self.diagonal(destino, fichaEnUso).filter{e=>e!=[]}.uniqueElement().pertenezcoA()!=fichaEnUso.pertenezcoA()
+		return self.diagonal(destino, fichaEnUso).filter{e=>e!=[]}.uniqueElement().uniqueElement().pertenezcoA()!=fichaEnUso.pertenezcoA()
 	}
 	
-	method enDondetengoParaComer(fichaEnUso){			
-		if(marcoSelector.masDerechaQueFichaSeleccionada()){
-			fichaEnUso.queDiagonal(fichaEnUso.diagonalDerecha())
-		}else{			
-			fichaEnUso.queDiagonal(fichaEnUso.diagonalIzquierda())
-		}	
+//	method enDondetengoParaComer(fichaEnUso){			
+//		if(marcoSelector.masDerechaQueFichaSeleccionada()){
+//			fichaEnUso.queDiagonal(fichaEnUso.diagonalDerecha())
+//		}else{			
+//			fichaEnUso.queDiagonal(fichaEnUso.diagonalIzquierda())
+//		}	
+//	 }
+	 
+	 method retornarElemento(nuevaPosicion, fichaEnUso){
+	 	return self.diagonal(nuevaPosicion, fichaEnUso).flatten().uniqueElement()
 	 }
-	
 	
 	method vaciarListasDeCoordenadas(ficha){
 		ficha.diagArribaDerecha().clear()
