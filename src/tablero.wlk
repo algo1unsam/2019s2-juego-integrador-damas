@@ -35,13 +35,6 @@ object tablero {
 		game.removeVisual(ficha)
 	}
 
-	//-------METODOS PARA LA REINA-------
-	//RETORNA SI ESTÁ VACÍA LA DIAGONAL 
-	//EXISTENTE ENTRE ORIGEN Y DESTINO
-//	method diagonalLibre(origen, destino){
-//		return destino
-//	}
-
 	method derechaArriba(){
 		if(x<topeDer and y<topeSup){
 			x += 1
