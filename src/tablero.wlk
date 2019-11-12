@@ -113,24 +113,23 @@ object marcoSelector {
 	}
 	
 	method tomaFicha(posicion) {
-		//Si tengo una fichaSeleccionada debo usar esa no la puedo soltar en este turno
-		if(self.tengoFicha()){
-			game.say(self,"Ya escogiste una ficha para mover, no puedes cambiarla")
-		}else{
+		// Si tengo una fichaSeleccionada debo usar esa no la puedo soltar en este turno
+		if (self.tengoFicha()) {
+			game.say(self, "Ya escogiste una ficha para mover, no puedes cambiarla")
+		} else {
 			game.colliders(self).forEach{ ficha =>
 				if (ficha != (self) and turnero.turnoDe().misFichas().contains(ficha)) {
 					fichaSeleccionada = ficha
-					fichaSeleccionada.estado(enRojo)	
+					fichaSeleccionada.estado(enRojo)
+				}else { game.say(self, "No puedes seleccionar esta ficha") }
+			}
+				// Comprueba que la fichaSeleccionada pueda mover o comer, si no puede la suelta
+			if (self.tengoFicha()) {
+				if (game.getObjectsIn(fichaSeleccionada.diagonalDerecha()) != [] and game.getObjectsIn(fichaSeleccionada.diagonalIzquierda()) != [] and not fichaSeleccionada.puedoComer(fichaSeleccionada.position())) {
+					self.soltaFicha()
 				}
 			}
-			//Comprueba que la fichaSeleccionada pueda mover o comer, si no puede la suelta
-			if(game.getObjectsIn(fichaSeleccionada.diagonalDerecha())!=[] 
-				and game.getObjectsIn(fichaSeleccionada.diagonalIzquierda())!=[]
-					and not fichaSeleccionada.puedoComer(fichaSeleccionada.position())
-			){
-				self.soltaFicha()
-			}
-		} 
+		}
 	}
 	//EL SELECTOR PRUEBA MOVER FICHA y da error si no hay ficha seleccionada
 	method moveFicha(posicion) {
@@ -288,7 +287,6 @@ object contador{
 			
 			//Si el tiempo llega a cero termina el conteo y finaliza con la placa empate
 			if (tiempo==0){
-				self.terminaConteoDe("descontarUnSegundo")
 				self.terminaConteoDe("controlarTurno")
 				juego.ganador(empate)
 				juego.finalizar()

@@ -99,7 +99,7 @@ object jugando inherits EstadoDelJuego {
 	override method accionS() { marcoSelector.tomaFicha(marcoSelector.position()) }
 	override method accionM() { marcoSelector.moveFicha(marcoSelector.position()) }
 	//Antes de permitir terminar el turno se verifica que se haya movido o comido antes
-	override method accionT() { if(marcoSelector.fichaSeleccionada().comerEnCadena()){marcoSelector.fichaSeleccionada().terminarMovimiento()}else{
+	override method accionT() { if( marcoSelector.tengoFicha() and marcoSelector.fichaSeleccionada().comerEnCadena()){marcoSelector.fichaSeleccionada().terminarMovimiento()}else{
 		self.error("Debes mover o comer antes de terminar el turno")}}	
 	override method accionP() { juego.pausar() }
 	override method accionIzq() { marcoSelector.movete(marcoSelector.position().left(1)) }
