@@ -6,7 +6,8 @@ import jugadores.*
 object juego {
 
 	var property estadoActual
-
+	var property ganador
+	
 	method comenzar() {
 		game.allVisuals().forEach{ visuales => game.removeVisual(visuales)}
 		self.estadoActual(jugando)
@@ -34,6 +35,12 @@ object juego {
 		self.estadoActual(menuPrincipal)
 		game.allVisuals().forEach{ visuales => game.removeVisual(visuales)}
 		menuPrincipal.navegar()
+	}
+	
+	method finalizar(){
+		game.allVisuals().forEach{ visuales => game.removeVisual(visuales)}
+		self.estadoActual(finalizado)
+		self.estadoActual().activarse()
 	}
 
 	method opciones() {
@@ -122,7 +129,7 @@ object jugando {
 		
 		// Instancia y visualiza todo lo referido al contador
 		game.addVisual(contador)
-		var minDec = new Marcador(numero = 1)
+		var minDec = new Marcador(numero = 0)
 		var minUni = new Marcador(numero = 0)
 		var segDec = new Marcador(numero = 0)
 		var segUni = new Marcador(numero = 0)
@@ -162,6 +169,29 @@ object pausado {
 	method accionDown() {}
 	method accionEnter() { juego.reanudarJuego() }
 	method accionBackspace() { juego.volverMenu() }
+
+}
+
+object finalizado {
+
+	method image() = return juego.ganador().imagenGanadora()
+
+	method position() = game.at(0, 0)
+
+	method activarse() {
+		
+		game.addVisual(self)
+	}
+	
+	method accionS() {}
+	method accionM() {}
+	method accionP() {}
+	method accionIzq() {}
+	method accionDer() {}
+	method accionUp() {}
+	method accionDown() {}
+	method accionEnter() { }
+	method accionBackspace() { game.stop() }
 
 }
 

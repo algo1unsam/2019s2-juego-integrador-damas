@@ -61,8 +61,18 @@ class Ficha {
 		
 		//Verifica si puede comer
 		if(self.puedoComer(self.laPosicion())){
-			//Verifica si puede comer a la izquierda o a la derecha
-			if(self.esPosibleComerDerecha(self.laPosicion())){
+			//Verifica si puede comer a la izquierda y a la derecha, o en una de ellas
+			if(self.esPosibleComerDerecha(self.laPosicion()) and self.esPosibleComerDerecha(self.laPosicion())){
+				if (marcoSelector.masDerechaQueFichaSeleccionada()){
+					//guarda la ficha en la lista provisoria
+					fichas=tablero.loQueHayEn(game.at(self.laPosicion().x()+1,self.laPosicion().y()+1*self.haciaDonde()))
+					//aumenta posicion horizontal
+					comidasSeguidasHorizontal=2+comidasSeguidasHorizontal					
+				}else{
+					fichas=tablero.loQueHayEn(game.at(self.laPosicion().x()-1,self.laPosicion().y()+1*self.haciaDonde()))
+					comidasSeguidasHorizontal=comidasSeguidasHorizontal-2					
+				}
+			}else if(self.esPosibleComerDerecha(self.laPosicion())){
 				//guarda la ficha en la lista provisoria
 				fichas=tablero.loQueHayEn(game.at(self.laPosicion().x()+1,self.laPosicion().y()+1*self.haciaDonde()))
 				//aumenta posicion horizontal
@@ -104,6 +114,10 @@ class Ficha {
 				self.fichasAComer().clear()				
 	}
 	
+	method superaLoslimtes(posicion){
+		return posicion.x()>11 or posicion.x()<4 or posicion.y()>7 or posicion.y()<0
+	}
+	
 	//Metodo para verificar si puede comer a la derecha
 	method esPosibleComerDerecha(posicion){
 	 
@@ -113,6 +127,8 @@ class Ficha {
 	  			turnero.contrincante().misFichas().all{ficha=>ficha.position()!=game.at(posicion.x()+2,posicion.y()+self.haciaDonde()*2)}
 	  			and
 	 			self.pertenezcoA().misFichas().all{ficha=>ficha.position()!=game.at(posicion.x()+2,posicion.y()+self.haciaDonde()*2)}
+	 			and not
+	 			self.superaLoslimtes(game.at(posicion.x()+2,posicion.y()+self.haciaDonde()*2))
 	 		)
 	 }
 	 
@@ -125,6 +141,8 @@ class Ficha {
 	  			turnero.contrincante().misFichas().all{ficha=>ficha.position()!=game.at(posicion.x()-2,posicion.y()+self.haciaDonde()*2)}
 	  			and
 	 			self.pertenezcoA().misFichas().all{ficha=>ficha.position()!=game.at(posicion.x()-2,posicion.y()+self.haciaDonde()*2)}
+		 		and not
+	 			self.superaLoslimtes(game.at(posicion.x()-2,posicion.y()+self.haciaDonde()*2)) 			
 	 		)
 	 }
 	  

@@ -31,6 +31,7 @@ class Jugador{
 		
 	}
 	
+	method imagenGanadora()	
 }
 
 object jugador1 inherits Jugador{
@@ -48,6 +49,10 @@ object jugador1 inherits Jugador{
 	
 	override method nombre(){
 		return "Jugador 1"
+	}
+	
+	override method imagenGanadora(){
+		return "ganadorUno.jpg"			
 	}
  
 }
@@ -67,4 +72,16 @@ object jugador2 inherits Jugador{
 	override method nombre(){
 		return "Jugador 2"
 	}
+	
+	override method imagenGanadora(){
+		return "ganadorDos.jpg"		
+	}
 } 
+
+object empate{
+	
+	method imagenGanadora(){
+		return "ganadorEmpate.jpg"
+	}
+	
+}

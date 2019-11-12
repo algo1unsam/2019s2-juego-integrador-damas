@@ -1,6 +1,7 @@
 import wollok.game.*
 import fichas.*
 import jugadores.*
+import menuPrincipal.*
 
 object tablero {
 
@@ -195,19 +196,24 @@ object turnero {
 		
 		//Indica al marcador del turno que empieza la cantidad de fichas que le queda a es jugador 
 		var cuantasFichas = jugadorEnTurno.misFichas().size()
-		var decena = cuantasFichas / 10
-		var unidad = cuantasFichas % (10)
-		jugadorEnTurno.decenas().asignarNumero(decena.truncate(0))
-		jugadorEnTurno.unidades().asignarNumero(unidad)
-		
-		//Cambia las imagenes del jugadorEnTurno y del contrincante
-		jugadorEnTurno.estado(enRojo)
-		jugadorEnTurno.image()
-		self.contrincante().estado(enBlanco)
-		self.contrincante().image()		
-		
-		//Inicia el contador de turno para el turno que empieza
-		contador.iniciarConteoTurno(jugadorEnTurno)
+		if(cuantasFichas==0){
+			juego.ganador(self.contrincante())
+			juego.finalizar()
+		}else{
+			var decena = cuantasFichas / 10
+			var unidad = cuantasFichas % (10)
+			jugadorEnTurno.decenas().asignarNumero(decena.truncate(0))
+			jugadorEnTurno.unidades().asignarNumero(unidad)
+			
+			//Cambia las imagenes del jugadorEnTurno y del contrincante
+			jugadorEnTurno.estado(enRojo)
+			jugadorEnTurno.image()
+			self.contrincante().estado(enBlanco)
+			self.contrincante().image()		
+			
+			//Inicia el contador de turno para el turno que empieza
+			contador.iniciarConteoTurno(jugadorEnTurno)	
+		}
 	}
 	//RETORNA AL JUGADOR QUE ESTÁ ESPERANDO EL MOVIMIENTO
 	method contrincante(){
@@ -273,11 +279,12 @@ object contador{
 				self.image()
 			}
 			
-			//Si el tiempo llega a cero termina el conteo y cierra el juega (accá debería ir a la placa de empate 
-			//en vez de cerrar el juego.
+			//Si el tiempo llega a cero termina el conteo y finaliza con la placa empate
 			if (tiempo==0){
 				self.terminaConteoDe("descontarUnSegundo")
-				game.stop()
+				self.terminaConteoDe("controlarTurno")
+				juego.ganador(empate)
+				juego.finalizar()
 			}
 		})
 	}
