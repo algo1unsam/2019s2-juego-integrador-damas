@@ -244,21 +244,22 @@ object damaReina{
 	}
 	
 	method puedoMoverme(destino, ficha){
-		//1) ESTA VACÍO LA POSICION DESTINO
-		//2) LAS CELDAS DE LA DIAGONAL ESTÁN TODAS VACIAS
-		//self.recorrerDiagonal(destino, ficha)
+		//1) ESTA VACÍA LA POSICION DESTINO
+		//2) Y LAS CELDAS DE LA DIAGONAL ESTÁN TODAS VACIAS
+		return marcoSelector.estaVacio() and self.estaVacio(destino,ficha)
 	}
 	
 	method movete(destino, ficha){
-		ficha.position(destino)
-		ficha.vaciarListasDeCoordenadas() //LAS COORDENADAS ANTERIORES
-		tablero.asignarCoordenadas()//USO LAS COORDENADAS DE LA FICHA COMO REFERENCIA
-		tablero.invocador(0)		//LE ASIGNA LAS COORDENADAS A LAS LISTAS
-		ficha.terminarMovimiento()
+		
+			ficha.position(destino)
+			ficha.vaciarListasDeCoordenadas() 	//LAS COORDENADAS ANTERIORES
+			tablero.asignarCoordenadas()		//USO LAS COORDENADAS DE LA FICHA COMO REFERENCIA
+			tablero.invocador(0)				//LE ASIGNA LAS COORDENADAS A LAS LISTAS
+			ficha.terminarMovimiento()
 	}
 	
 	//RETORNA LOS ELEMENTOS DE LA DIAGONAL ENTRE LA FICHA Y EL DESTINO
-	method recorrerDiagonal(destino, ficha){
+	method diagonal(destino, ficha){
 		
 		if(marcoSelector.masDerechaQueFichaSeleccionada()){
 			//A LA DERECHA
@@ -267,21 +268,22 @@ object damaReina{
 				return ficha.diagArribaDerecha().filter{c=>c.y()<destino.y()}.map{c=>game.getObjectsIn(c)}
 			}else{
 				//ABAJO
-				return ficha.diagArribaDerecha().filter{c=>c.y()<destino.y()}.map{c=>game.getObjectsIn(c)}	
+				return ficha.diagAbajoDerecha().filter{c=>c.y()>destino.y()}.map{c=>game.getObjectsIn(c)}	
 			}
 		}else{
 			//A LA IZQUIERDA
 			if(marcoSelector.masArribaQueFichaSeleccionada()){
 				//ARRIBA
-				return ficha.diagArribaDerecha().filter{c=>c.y()<destino.y()}.map{c=>game.getObjectsIn(c)}	
-								 
+				return ficha.diagArribaIzquierda().filter{c=>c.y()<destino.y()}.map{c=>game.getObjectsIn(c)}	
 			}else{
 				//ABAJO
-				return ficha.diagArribaDerecha().filter{c=>c.y()<destino.y()}.map{c=>game.getObjectsIn(c)}	
-				 
+				return ficha.diagAbajoIzquierda().filter{c=>c.y()>destino.y()}.map{c=>game.getObjectsIn(c)}	
 			}
 		}
 	}
 	
+	method estaVacio(destino, ficha){
+		return self.diagonal(destino, ficha).flatten().size().equals(0)
+	}
 	
 }
