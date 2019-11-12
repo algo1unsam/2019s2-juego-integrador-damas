@@ -9,6 +9,15 @@ object tablero {
 	var imagenes=["tableroClasico.jpg","tableroArgento.jpeg","tableroWollok.jpeg","tableroMadera.jpg"]
 	//Variable para seleccionar que imagen de tablero va (se cambia en el menu principal) 
 	var property posicionLista=0
+		
+	//limites del tablero
+	const property topeIzq = 4
+	const property topeDer = 11
+	const property topeSup = 7
+	const property topeInf = 0
+	
+	var x = 0
+	var y = 0
 
 	method image() {
 		return imagenes.get(posicionLista)
@@ -24,7 +33,79 @@ object tablero {
 	method quitarFicha(ficha){
 		game.removeVisual(ficha)
 	}
- 
+
+	//-------METODOS PARA LA REINA-------
+	//RETORNA SI ESTÁ VACÍA LA DIAGONAL 
+	//EXISTENTE ENTRE ORIGEN Y DESTINO
+//	method diagonalLibre(origen, destino){
+//		return destino
+//	}
+
+	method derechaArriba(){
+		if(x<topeDer and y<topeSup){
+			x += 1
+			y += 1
+			marcoSelector.fichaSeleccionada().diagArribaDerecha().add(game.at(x,y))
+			self.invocador(0)
+		}else{
+			self.asignarCoordenadas()
+			self.invocador(1)
+		}
+	}
+	
+	method derechaAbajo(){
+		if(x<topeDer and y>topeInf){
+			x += 1
+			y -= 1
+			marcoSelector.fichaSeleccionada().diagAbajoDerecha().add(game.at(x,y))
+			self.invocador(1)
+		}else{
+			self.asignarCoordenadas()
+			self.invocador(2)
+		}
+	}
+	
+	method izquierdaArriba(){
+		if(x>topeIzq and y<topeSup){
+			x -= 1
+			y += 1
+			marcoSelector.fichaSeleccionada().diagArribaIzquierda().add(game.at(x,y))
+			self.invocador(2)
+		}else{
+			self.asignarCoordenadas()
+			self.invocador(3)
+		}
+	}
+	
+	method izquierdaAbajo(){
+		
+		if(x>topeIzq and y>topeInf){
+			x -= 1
+			y -= 1
+			marcoSelector.fichaSeleccionada().diagAbajoIzquierda().add(game.at(x,y))
+			self.invocador(3)
+		}else{
+			self.asignarCoordenadas()
+		}
+	
+	}
+	
+	method asignarCoordenadas(){
+		x = marcoSelector.fichaSeleccionada().position().x()
+		y = marcoSelector.fichaSeleccionada().position().y()
+	}
+		
+	method invocador(indice){
+		if(indice == 0)
+			self.derechaArriba()
+		if(indice == 1)
+			self.derechaAbajo()
+		if(indice == 2)
+			self.izquierdaArriba()
+		if(indice == 3)
+			self.izquierdaAbajo()
+	}
+	
 }
 
 object marcoSelector {
@@ -90,7 +171,13 @@ object marcoSelector {
 	method masDerechaQueFichaSeleccionada(){
 		return position.x() - fichaSeleccionada.position().x() > 0
 	}
-
+	
+	//PARA EL CASO DE LA REINA
+	method masArribaQueFichaSeleccionada(){
+		return position.y() - fichaSeleccionada.position().y() > 0
+	}
+	
+	
 }
 
 object turnero {

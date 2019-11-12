@@ -11,8 +11,16 @@ class Ficha {
 	var comidasSeguidasVertical=0	
 	//Lista de fichas a comer sea una sola o varias si come en cadena
 	var property fichasAComer=[]
+		
+	//VARIABLES PARA LA REINA
+	var tipo = damaComun
 	
-	//var _esReina = false
+	//VARIABLES PARA LA REINA: CADA LISTA CONTIENE LAS COORDENADAS 
+	//RESPECTO DE LA POSICION REINA
+	var property diagArribaDerecha = []
+	var property diagArribaIzquierda = []
+	var property diagAbajoDerecha = []
+	var property diagAbajoIzquierda = []
 
 		 	
 	method validar(nuevaPosicion) {
@@ -25,11 +33,11 @@ class Ficha {
 		}
 	}
 
-	//SE VALIDA MOVIMIENTO EN DIAGONAL SIMPLE
-	method puedoMoverme(posicion){
-		return (posicion.equals(self.diagonalDerecha()) or posicion.equals(self.diagonalIzquierda())) and marcoSelector.estaVacio()
-	} 
-	
+	//SE VALIDA MOVIMIENTO
+	method puedoMoverme(nuevaPosicion){
+		return tipo.puedoMoverme(nuevaPosicion, self)
+	}
+			
 	//Metodos soporte para validar el movimiento simple 
 	method diagonalDerecha(){
 		return game.at(position.x()+1,position.y()+self.haciaDonde())
@@ -41,7 +49,7 @@ class Ficha {
 	
 	//SE VALIDA SI LA FICHA PUEDE COMER 
 	method puedoComer(posicion){
-		return	self.esPosibleComerDerecha(posicion) or self.esPosibleComerIzquierda(posicion)				
+		return	tipo.puedoComer(posicion, self)				
 	}
 	
 	method laPosicion(){
@@ -122,10 +130,12 @@ class Ficha {
 	  
 	//SE MUEVE UNA POSICIÓN QUE LE LLEGA DEL MARCO SELECTOR
 	method movete(nuevaPosicion){
-		position = nuevaPosicion
-		self.terminarMovimiento()
+		
+		if(self.meTransformoEnReina(nuevaPosicion)){
+			self.transformarAReina()
+		}
+		tipo.movete(nuevaPosicion, self)
 	}
-
 	
 	//FICHA LE INDICA A SELECTOR QUE LA SUELTE Y JUGADOR DICE QUE YA MOVIÓ
 	method terminarMovimiento(){
@@ -133,16 +143,27 @@ class Ficha {
 		self.pertenezcoA().yaMovi()
 	}
 	
-			
+	method transformarAReina(){
+		//CAMBIAR SU IMAGEN
+		tipo = damaReina
+	}
+	
+	method vaciarListasDeCoordenadas(){
+		diagArribaDerecha.clear()
+		diagArribaIzquierda.clear()
+		diagAbajoDerecha.clear()
+		diagAbajoIzquierda.clear()
+	}
+				
 	//METODOS SOBREESCRITOS EN CLASES HIJAS
 	method haciaDonde()
 	method image()
 	method pertenezcoA()
-
+	method meTransformoEnReina(destino)
 }
 
 class FichaClara inherits Ficha {
-	var imagenes = [ "fichaClara.png", "fichaSeleccionada.png"]
+	var imagenes = ["fichaClara.png", "fichaSeleccionada.png"]
 	
 	override method haciaDonde(){
 		return 1
@@ -156,10 +177,14 @@ class FichaClara inherits Ficha {
 		return jugador1
 	}
 	
+	override method meTransformoEnReina(destino){
+		return destino.y().equals(tablero.topeSup())
+	}
+	
 }
 
 class FichaOscura inherits Ficha {
-	var imagenes = [ "fichaOscura.png", "fichaSeleccionada.png"]
+	var imagenes = ["fichaOscura.png", "fichaSeleccionada.png"]
 		
 	override method haciaDonde(){
 		return -1
@@ -172,6 +197,73 @@ class FichaOscura inherits Ficha {
 	override method pertenezcoA(){
 		return jugador2
 	}
-		
+	
+	override method meTransformoEnReina(destino){
+		return destino.y().equals(tablero.topeInf())
+	}
 }
 
+object damaComun{
+	
+	method puedoComer(posicion, ficha){
+		return ficha.esPosibleComerDerecha(posicion) or ficha.esPosibleComerIzquierda(posicion)
+	}
+	
+	method puedoMoverme(posicion, ficha){
+		return (posicion.equals(ficha.diagonalDerecha()) or posicion.equals(ficha.diagonalIzquierda())) and marcoSelector.estaVacio()
+	}
+	
+	method movete(destino, ficha){
+		ficha.position(destino)
+		ficha.terminarMovimiento()
+	}
+			
+}
+
+object damaReina{
+	
+	method puedoComer(posicion, ficha){
+	}
+	
+	method puedoMoverme(destino, ficha){
+		//1) ESTA VACÍO LA POSICION DESTINO
+		//2) LAS CELDAS DE LA DIAGONAL ESTÁN TODAS VACIAS
+		//self.recorrerDiagonal(destino, ficha)
+	}
+	
+	method movete(destino, ficha){
+		ficha.position(destino)
+		ficha.vaciarListasDeCoordenadas() //LAS COORDENADAS ANTERIORES
+		tablero.asignarCoordenadas()//USO LAS COORDENADAS DE LA FICHA COMO REFERENCIA
+		tablero.invocador(0)		//LE ASIGNA LAS COORDENADAS A LAS LISTAS
+		ficha.terminarMovimiento()
+	}
+	
+	//RETORNA LOS ELEMENTOS DE LA DIAGONAL ENTRE LA FICHA Y EL DESTINO
+	method recorrerDiagonal(destino, ficha){
+		
+		if(marcoSelector.masDerechaQueFichaSeleccionada()){
+			//A LA DERECHA
+			if(marcoSelector.masArribaQueFichaSeleccionada()){
+				//ARRIBA
+				return ficha.diagArribaDerecha().filter{c=>c.y()<destino.y()}.map{c=>game.getObjectsIn(c)}
+			}else{
+				//ABAJO
+				return ficha.diagArribaDerecha().filter{c=>c.y()<destino.y()}.map{c=>game.getObjectsIn(c)}	
+			}
+		}else{
+			//A LA IZQUIERDA
+			if(marcoSelector.masArribaQueFichaSeleccionada()){
+				//ARRIBA
+				return ficha.diagArribaDerecha().filter{c=>c.y()<destino.y()}.map{c=>game.getObjectsIn(c)}	
+								 
+			}else{
+				//ABAJO
+				return ficha.diagArribaDerecha().filter{c=>c.y()<destino.y()}.map{c=>game.getObjectsIn(c)}	
+				 
+			}
+		}
+	}
+	
+	
+}
