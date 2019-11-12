@@ -51,7 +51,7 @@ class Ficha {
 	
 	//COME FICHA CONTRINCANTE Y LUEGO SE MUEVE
 	method come(nuevaPosicion, ficha){
-		ficha.forEach{e=>tablero.quitarFicha(e)}
+		ficha.forEach{e=>tablero.quitarFicha(e)} //QUITA EL ELEMENTO VISUAL
 		ficha.forEach{e=>turnero.contrincante().quitarFicha(e)}
 		self.movete(nuevaPosicion)
 		comerEnCadena=true
@@ -77,7 +77,10 @@ class Ficha {
 	}
 	
 	method superaLoslimtes(posicion){
-		return posicion.x()>11 or posicion.x()<4 or posicion.y()>7 or posicion.y()<0
+		return posicion.x()>tablero.topeDer() 
+				or posicion.x()<tablero.topeIzq() 
+				or posicion.y()>tablero.topeSup() 
+				or posicion.y()<tablero.topeInf()
 	}
 	
 	//Metodo para verificar si puede comer a la derecha
@@ -111,7 +114,7 @@ class Ficha {
 	//SE MUEVE UNA POSICIÓN QUE LE LLEGA DEL MARCO SELECTOR
 	method movete(nuevaPosicion){
 		
-		if(self.meTransformoEnReina(nuevaPosicion)){
+		if(tipo.equals(damaComun) and self.meTransformoEnReina(nuevaPosicion)){
 			self.transformarAReina()
 		}
 		tipo.movete(nuevaPosicion, self)
@@ -129,14 +132,6 @@ class Ficha {
 			self.comerEnCadena(false)			
 	}
 
-	
-	method vaciarListasDeCoordenadas(){
-		diagArribaDerecha.clear()
-		diagArribaIzquierda.clear()
-		diagAbajoDerecha.clear()
-		diagAbajoIzquierda.clear()
-	}
-				
 	//METODOS SOBREESCRITOS EN CLASES HIJAS
 	method haciaDonde()
 	method image()
@@ -204,7 +199,10 @@ object damaComun{
 
 object damaReina{
 	
+	const property imagen = ""
+	
 	method puedoComer(posicion, ficha){
+		return marcoSelector.estaVacio() and self.hayParaComer(posicion, ficha)
 	}
 	
 	method puedoMoverme(destino, ficha){
@@ -216,10 +214,10 @@ object damaReina{
 	method movete(destino, ficha){
 		
 			ficha.position(destino)
-			ficha.vaciarListasDeCoordenadas() 	//LAS COORDENADAS ANTERIORES
+			self.vaciarListasDeCoordenadas(ficha) 	//LAS COORDENADAS ANTERIORES
 			tablero.asignarCoordenadas()		//USO LAS COORDENADAS DE LA FICHA COMO REFERENCIA
 			tablero.invocador(0)				//LE ASIGNA LAS COORDENADAS A LAS LISTAS
-			ficha.terminarMovimiento()
+			
 	}
 	
 	//RETORNA LOS ELEMENTOS DE LA DIAGONAL ENTRE LA FICHA Y EL DESTINO
@@ -247,7 +245,18 @@ object damaReina{
 	}
 	
 	method estaVacio(destino, ficha){
-		return self.diagonal(destino, ficha).flatten().size().equals(0)
+		return self.diagonal(destino, ficha).flatten().isEmpty()
+	}
+	
+	method hayParaComer(destino, ficha){
+		return self.diagonal(destino, ficha).uniqueElement().pertenezcoA()!=ficha.pertenezcoA()
+	}
+	
+	method vaciarListasDeCoordenadas(ficha){
+		ficha.diagArribaDerecha().clear()
+		ficha.diagArribaIzquierda().clear()
+		ficha.diagAbajoDerecha().clear()
+		ficha.diagAbajoIzquierda().clear()
 	}
 	
 }
