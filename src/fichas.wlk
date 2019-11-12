@@ -107,7 +107,7 @@ class Ficha {
 	 			self.superaLoslimtes(game.at(posicion.x()-2,posicion.y()+self.haciaDonde()*2)) 			
 	 		)
 	 }
-	  
+	 
 	//SE MUEVE UNA POSICIÓN QUE LE LLEGA DEL MARCO SELECTOR
 	method movete(nuevaPosicion){
 		
@@ -145,11 +145,12 @@ class Ficha {
 }
 
 class FichaClara inherits Ficha {
-	var imagenes = ["fichaClara.png", "fichaSeleccionadaClara.png"]
+	var imagenes = ["fichaClara.png", "fichaClaraSeleccionada.png"]
 	
 	override method haciaDonde(){
 		return 1
-	} 
+	}
+	 
 
 	override method image() {
 		return imagenes.get(estado.devolvePosicion())
