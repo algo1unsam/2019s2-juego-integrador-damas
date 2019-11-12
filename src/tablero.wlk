@@ -106,19 +106,33 @@ object marcoSelector {
 
 	var property position = game.at(4, 2)
 	var property fichaSeleccionada=null
-
-	method tomaFicha(posicion) {
-		if(fichaSeleccionada!=null){
-			fichaSeleccionada.estado(enBlanco)
-		}
-		game.colliders(self).forEach{ ficha =>
-			if (ficha != (self) and turnero.turnoDe().misFichas().contains(ficha)) {
-				fichaSeleccionada = ficha
-				fichaSeleccionada.estado(enRojo)	
-			}
-		}
+	
+	//Metodo para verificar si ya tiene una fichaSeleccionada
+	method tengoFicha(){
+		return fichaSeleccionada!=null
 	}
-	//EL SELECTOR PRUEBA MOVER FICHA
+	
+	method tomaFicha(posicion) {
+		//Si tengo una fichaSeleccionada debo usar esa no la puedo soltar en este turno
+		if(self.tengoFicha()){
+			game.say(self,"Ya escogiste una ficha para mover, no puedes cambiarla")
+		}else{
+			game.colliders(self).forEach{ ficha =>
+				if (ficha != (self) and turnero.turnoDe().misFichas().contains(ficha)) {
+					fichaSeleccionada = ficha
+					fichaSeleccionada.estado(enRojo)	
+				}
+			}
+			//Comprueba que la fichaSeleccionada pueda mover o comer, si no puede la suelta
+			if(game.getObjectsIn(fichaSeleccionada.diagonalDerecha())!=[] 
+				and game.getObjectsIn(fichaSeleccionada.diagonalIzquierda())!=[]
+					and not fichaSeleccionada.puedoComer(fichaSeleccionada.position())
+			){
+				self.soltaFicha()
+			}
+		} 
+	}
+	//EL SELECTOR PRUEBA MOVER FICHA y da error si no hay ficha seleccionada
 	method moveFicha(posicion) {
 		if (fichaSeleccionada != null){ 
 			fichaSeleccionada.validar(posicion)

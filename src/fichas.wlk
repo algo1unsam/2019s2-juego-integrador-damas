@@ -4,13 +4,11 @@ import jugadores.*
 
 class Ficha {
 	var property position
+	var property queDiagonal=null
 	//variable para que cambie de color cuando se selecciona la ficha
 	var property estado=enBlanco
-	//Variables para ir aumentando la posición en caso de poder comer en cadena
-	var comidasSeguidasHorizontal=0
-	var comidasSeguidasVertical=0	
-	//Lista de fichas a comer sea una sola o varias si come en cadena
-	var property fichasAComer=[]
+	//Variable que marca si ya comió alguna ficha
+	var property comerEnCadena=false
 		
 	//VARIABLES PARA LA REINA
 	var tipo = damaComun
@@ -24,15 +22,41 @@ class Ficha {
 
 		 	
 	method validar(nuevaPosicion) {
-		if(self.puedoMoverme(nuevaPosicion)) {
-			self.movete(nuevaPosicion)			
-		}else if(self.puedoComer(position)){
-			self.comerEncadenado()
+		//verifica si puede hacer un movimiento siemple, el not comerEnCadena es para evitar que luego de comer haga un movimiento simple
+		if(self.puedoMoverme(nuevaPosicion) and not comerEnCadena) {
+			self.movete(nuevaPosicion)
+			self.terminarMovimiento()
+		//Verifica si puede comer y que la posicion a la que se mueva sea +-2 horizontales y +o-verticales	
+		}else if(self.puedoComer(position) and (nuevaPosicion.x()-position.x()).abs()==2 and (nuevaPosicion.y()-position.y()).abs()==2){
+			self.enDondetengoParaComer()
+			//define de que lado puede comer y tira erro si pudiendo comer de un lado trata de mover al otro 
+			if((self.esPosibleComerDerecha(position) and queDiagonal==self.diagonalDerecha())or(self.esPosibleComerIzquierda(position) and queDiagonal==self.diagonalIzquierda())){
+				self.come(nuevaPosicion, tablero.loQueHayEn(queDiagonal))
+			}else{
+				marcoSelector.error("Ese movimiento no es válido")
+			}
 		}else{
 			marcoSelector.error("Ese movimiento no es válido")
 		}
 	}
-
+	
+	//Define de que lado tiene para comer
+	method enDondetengoParaComer(){			
+		if(marcoSelector.masDerechaQueFichaSeleccionada()){
+			queDiagonal=self.diagonalDerecha()
+		}else{			
+			queDiagonal=self.diagonalIzquierda()
+		}	
+	}
+	
+	//COME FICHA CONTRINCANTE Y LUEGO SE MUEVE
+	method come(nuevaPosicion, ficha){
+		ficha.forEach{e=>tablero.quitarFicha(e)}
+		ficha.forEach{e=>turnero.contrincante().quitarFicha(e)}
+		self.movete(nuevaPosicion)
+		comerEnCadena=true
+	}
+	
 	//SE VALIDA MOVIMIENTO
 	method puedoMoverme(nuevaPosicion){
 		return tipo.puedoMoverme(nuevaPosicion, self)
@@ -52,68 +76,6 @@ class Ficha {
 		return	tipo.puedoComer(posicion, self)				
 	}
 	
-	method laPosicion(){
-		return game.at(position.x()+comidasSeguidasHorizontal,position.y()+comidasSeguidasVertical*self.haciaDonde())
-	}
-
-	method comerEncadenado(){
-		var fichas=[]
-		
-		//Verifica si puede comer
-		if(self.puedoComer(self.laPosicion())){
-			//Verifica si puede comer a la izquierda y a la derecha, o en una de ellas
-			if(self.esPosibleComerDerecha(self.laPosicion()) and self.esPosibleComerDerecha(self.laPosicion())){
-				if (marcoSelector.masDerechaQueFichaSeleccionada()){
-					//guarda la ficha en la lista provisoria
-					fichas=tablero.loQueHayEn(game.at(self.laPosicion().x()+1,self.laPosicion().y()+1*self.haciaDonde()))
-					//aumenta posicion horizontal
-					comidasSeguidasHorizontal=2+comidasSeguidasHorizontal					
-				}else{
-					fichas=tablero.loQueHayEn(game.at(self.laPosicion().x()-1,self.laPosicion().y()+1*self.haciaDonde()))
-					comidasSeguidasHorizontal=comidasSeguidasHorizontal-2					
-				}
-			}else if(self.esPosibleComerDerecha(self.laPosicion())){
-				//guarda la ficha en la lista provisoria
-				fichas=tablero.loQueHayEn(game.at(self.laPosicion().x()+1,self.laPosicion().y()+1*self.haciaDonde()))
-				//aumenta posicion horizontal
-				comidasSeguidasHorizontal=2+comidasSeguidasHorizontal
-			}else{
-				fichas=tablero.loQueHayEn(game.at(self.laPosicion().x()-1,self.laPosicion().y()+1*self.haciaDonde()))
-				comidasSeguidasHorizontal=comidasSeguidasHorizontal-2
-			}
-			//aumenta posicion en vertical
-			comidasSeguidasVertical=comidasSeguidasVertical+2
-			//carga la ficha en la lista acumulatoria
-			fichas.forEach{ficha=>self.fichasAComer().add(ficha)}
-			
-			//Verifica si la posicion coincide con el marcoSelector, si no es así verifica si se salió de los límites o si puede seguir comiendo
-			if(self.laPosicion()==marcoSelector.position()){
-				//Si es igual al marcoSelector come la/s ficha/s, mueve y vuelve a o los valores de movimiento
-				self.fichasAComer().forEach{ficha=>tablero.quitarFicha(ficha); turnero.contrincante().quitarFicha(ficha)}
-				self.movete(self.laPosicion())
-				self.limpiarFichasAComer()	
-			}else if(self.laPosicion().x()>11 or self.laPosicion().x()<4 or self.laPosicion().y()>7 or self.laPosicion().y()<0){
-				//Si salió de los límites sin tener la misma posicion que el marcoSelector da invalido el movimiento
-				self.limpiarFichasAComer()	
-				game.say(marcoSelector,"Movimiento Invalido")
-			}else{
-				//Si no pasa lo anterior verifica si puede seguir comiendo		
-				self.comerEncadenado()
-			}
-		}else{
-				self.limpiarFichasAComer()		
-				game.say(marcoSelector,"Movimiento Invalido")
-		} 
-		
-	}
-	
-	//Metodo para volver a cero las variables del movimiento en cadena y limpia las fichas si acumuló y no comió
-	method limpiarFichasAComer(){
-				comidasSeguidasVertical=0
-				comidasSeguidasHorizontal=0
-				self.fichasAComer().clear()				
-	}
-	
 	method superaLoslimtes(posicion){
 		return posicion.x()>11 or posicion.x()<4 or posicion.y()>7 or posicion.y()<0
 	}
@@ -122,7 +84,7 @@ class Ficha {
 	method esPosibleComerDerecha(posicion){
 	 
 	  		return(
-	 			turnero.contrincante().misFichas().any{ficha=>ficha.position()==game.at(posicion.x()+1,posicion.y()+self.haciaDonde())}
+	 			turnero.contrincante().misFichas().any{ficha=>ficha.position()==self.diagonalDerecha()}
 	 			and
 	  			turnero.contrincante().misFichas().all{ficha=>ficha.position()!=game.at(posicion.x()+2,posicion.y()+self.haciaDonde()*2)}
 	  			and
@@ -136,7 +98,7 @@ class Ficha {
 	 method esPosibleComerIzquierda(posicion){
 	 
 	  		return(
-	 			turnero.contrincante().misFichas().any{ficha=>ficha.position()==game.at(posicion.x()-1,posicion.y()+self.haciaDonde())}
+	 			turnero.contrincante().misFichas().any{ficha=>ficha.position()==self.diagonalIzquierda()}
 	 			and
 	  			turnero.contrincante().misFichas().all{ficha=>ficha.position()!=game.at(posicion.x()-2,posicion.y()+self.haciaDonde()*2)}
 	  			and
@@ -155,16 +117,18 @@ class Ficha {
 		tipo.movete(nuevaPosicion, self)
 	}
 	
-	//FICHA LE INDICA A SELECTOR QUE LA SUELTE Y JUGADOR DICE QUE YA MOVIÓ
-	method terminarMovimiento(){
-		marcoSelector.soltaFicha()
-		self.pertenezcoA().yaMovi()
-	}
-	
 	method transformarAReina(){
 		//CAMBIAR SU IMAGEN
 		tipo = damaReina
 	}
+		
+	//FICHA LE INDICA A SELECTOR QUE LA SUELTE Y JUGADOR DICE QUE YA MOVIÓ
+	method terminarMovimiento(){
+			marcoSelector.soltaFicha()
+			self.pertenezcoA().yaMovi()
+			self.comerEnCadena(false)			
+	}
+
 	
 	method vaciarListasDeCoordenadas(){
 		diagArribaDerecha.clear()
@@ -233,7 +197,6 @@ object damaComun{
 	
 	method movete(destino, ficha){
 		ficha.position(destino)
-		ficha.terminarMovimiento()
 	}
 			
 }

@@ -15,6 +15,7 @@ program damas {
 	keyboard.s().onPressDo { juego.estadoActual().accionS() }
 	keyboard.m().onPressDo { juego.estadoActual().accionM() }
 	keyboard.p().onPressDo { juego.estadoActual().accionP() }
+	keyboard.t().onPressDo { juego.estadoActual().accionT() }
 	keyboard.enter().onPressDo { juego.estadoActual().accionEnter() }
 	keyboard.left().onPressDo { juego.estadoActual().accionIzq() }
 	keyboard.right().onPressDo { juego.estadoActual().accionDer() }
