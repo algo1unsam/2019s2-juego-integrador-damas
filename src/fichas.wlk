@@ -24,11 +24,7 @@ class Ficha {
 	
 	//Define de que lado tiene para comer
 	method enDondetengoParaComer(){			
-		if(marcoSelector.masDerechaQueFichaSeleccionada()){
-			queDiagonal=self.diagonalDerecha()
-		}else{			
-			queDiagonal=self.diagonalIzquierda()
-		}	
+		tipo.enDondetengoParaComer(self)
 	}
 	
 	//COME FICHA CONTRINCANTE Y LUEGO SE MUEVE
@@ -145,7 +141,7 @@ object damaComun{
 		//sea +-2 horizontales y +o-verticales	
 		}else 
 			if(fichaEnUso.puedoComer(fichaEnUso.position()) and (nuevaPosicion.x()-fichaEnUso.position().x()).abs()==2 and (nuevaPosicion.y()-fichaEnUso.position().y()).abs()==2){
-				fichaEnUso.enDondetengoParaComer()
+				self.enDondetengoParaComer(fichaEnUso)
 				//define de que lado puede comer y tira erro si 
 				//pudiendo comer de un lado trata de mover al otro 
 				if((self.esPosibleComerDerecha(fichaEnUso.position(),fichaEnUso) and fichaEnUso.queDiagonal()==fichaEnUso.diagonalDerecha())
@@ -204,6 +200,14 @@ object damaComun{
 	 			fichaEnUso.superaLoslimtes(game.at(posicion.x()-2,posicion.y()+fichaEnUso.haciaDonde()*2)) 			
 	 		)
 	 }
+	 
+	 method enDondetengoParaComer(fichaEnUso){			
+		if(marcoSelector.masDerechaQueFichaSeleccionada()){
+			fichaEnUso.queDiagonal(fichaEnUso.diagonalDerecha())
+		}else{			
+			fichaEnUso.queDiagonal(fichaEnUso.diagonalIzquierda())
+		}	
+	 }
 			
 }
 
@@ -216,20 +220,23 @@ object damaReina{
 		if(fichaEnUso.puedoMoverme(nuevaPosicion) and not fichaEnUso.comerEnCadena()) {
 			fichaEnUso.movete(nuevaPosicion)
 			fichaEnUso.terminarMovimiento()
-		}
-		if(fichaEnUso.puedoComer(nuevaPosicion)){
-			
+		}else{
+				if(self.puedoComer(nuevaPosicion, fichaEnUso)){
+					self.come(nuevaPosicion, self.diagonal(nuevaPosicion, fichaEnUso).uniqueElement())
+				}else{
+					fichaEnUso.error("No podes comer esa ficha")
+				}
 		}
 	}
 		
-	method puedoComer(posicion, ficha){
-		return marcoSelector.estaVacio() and self.hayParaComer(posicion, ficha)
+	method puedoComer(posicion, fichaEnUso){
+		return marcoSelector.estaVacio() and self.hayParaComer(posicion, fichaEnUso)
 	}
 	
-//	method come(posicion, ficha){
-//		tablero.quitarFicha(ficha)
-//		turnero.contrincante().quitarFicha(ficha)
-//	}
+	method come(posicion, fichaContrincante){
+		tablero.quitarFicha(fichaContrincante)
+		turnero.contrincante().quitarFicha(fichaContrincante)
+	}
 	
 	method puedoMoverme(destino, ficha){
 		//1) ESTA VACÍA LA POSICION DESTINO
@@ -274,9 +281,19 @@ object damaReina{
 		return self.diagonal(destino, ficha).flatten().isEmpty()
 	}
 	
-	method hayParaComer(destino, ficha){
-		return self.diagonal(destino, ficha).uniqueElement().pertenezcoA()!=ficha.pertenezcoA()
+	method hayParaComer(destino, fichaEnUso){
+		//da error
+		return self.diagonal(destino, fichaEnUso).filter{e=>e!=[]}.uniqueElement().pertenezcoA()!=fichaEnUso.pertenezcoA()
 	}
+	
+	method enDondetengoParaComer(fichaEnUso){			
+		if(marcoSelector.masDerechaQueFichaSeleccionada()){
+			fichaEnUso.queDiagonal(fichaEnUso.diagonalDerecha())
+		}else{			
+			fichaEnUso.queDiagonal(fichaEnUso.diagonalIzquierda())
+		}	
+	 }
+	
 	
 	method vaciarListasDeCoordenadas(ficha){
 		ficha.diagArribaDerecha().clear()
